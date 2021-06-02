@@ -42,7 +42,7 @@ class State:
     deserialisers: Mapping[int, Callable[[], 'State']] = {}
 
 
-def deserialise_state(dct):
+def deserialise_state(ecosystem: 'Ecosystem', dct):
     state_type = int(dct["state_type"])
     clsmethod = State.deserialisers[state_type].__get__(State.subclasses[state_type])
-    return clsmethod(dct)
+    return clsmethod(ecosystem, dct)

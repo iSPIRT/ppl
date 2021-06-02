@@ -2,9 +2,6 @@ import itertools
 import logging
 from enum import Enum
 
-journals = {}
-journals_for_wallet = {}
-
 log = logging.getLogger("Journal")
 
 
@@ -12,7 +9,7 @@ class JournalActivity(Enum):
     CreateState = 1
 
 
-class Journal:
+class WalletJournal:
     next_id = itertools.count().__next__
 
     def __init__(self, code):
@@ -22,15 +19,10 @@ class Journal:
         self.own_wallets = {}
         self.active_states = {}
         self.audit_log = []
-        journals[self.id] = self
 
     def __str__(self):
         return "J({}:{})".format(self.id, self.code)
 
-    def register_wallet(self, wallet):
-        wallet.id = self.next_wallet_id()
-        self.own_wallets[wallet.id] = wallet
-        journals_for_wallet[wallet.id] = self
 
     def record_state(self, state):
         self.active_states[state.id] = state
@@ -42,7 +34,3 @@ class Journal:
         print("  Active states are")
         for state in self.active_states.values():
             print("    {}".format(state))
-
-
-def get_wallet_for_id(wallet_id):
-    return journals_for_wallet[wallet_id].own_wallets[wallet_id]

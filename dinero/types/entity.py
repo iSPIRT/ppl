@@ -1,5 +1,7 @@
 import logging
 
+from dinero.types.ecosystem import Ecosystem
+from dinero.types.wallet_provider import WalletProvider
 from dinero.utils.crypto import generate_keypair
 from dinero.types.wallet import Wallet
 
@@ -15,7 +17,10 @@ class Entity:
 
 class CentralBank(Entity):
     """A Central bank is a one off entity with special powers to issue currency"""
-    def __init__(self, code, main_wallet_code, main_wallet_journal):
+    def __init__(self, ecosystem: Ecosystem, code: str, main_wallet_provider: WalletProvider):
         super().__init__(code)
+        self.main_wallet = Wallet(Wallet.next(), "RBI ONE")
         self.key = generate_keypair('rbi_cur_key')
-        self.main_wallet = Wallet(main_wallet_code, self.key, main_wallet_journal)
+        self.provider = main_wallet_provider
+        self.provider.register_wallet(self.main_wallet)
+        ecosystem.associate_wallet_to_provider(self.main_wallet, self.provider)
