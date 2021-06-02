@@ -12,3 +12,4 @@ class Wallet:
 
     def __str__(self):
         return "W({}:{})".format(self.id, self.code)
+

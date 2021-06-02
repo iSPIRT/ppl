@@ -42,3 +42,7 @@ class Journal:
         print("  Active states are")
         for state in self.active_states.values():
             print("    {}".format(state))
+
+
+def get_wallet_for_id(wallet_id):
+    return journals_for_wallet[wallet_id].own_wallets[wallet_id]

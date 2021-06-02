@@ -2,6 +2,7 @@ import logging
 from decimal import Decimal
 from enum import Enum
 
+from dinero.types.journal import journals_for_wallet, get_wallet_for_id
 from dinero.types.state import State, SerialisedState, StateType
 from dinero.types.wallet import Wallet
 
@@ -30,6 +31,13 @@ class IOU(State):
     def __str__(self):
         return "IOU {}->{}:{}".format(self.from_wallet, self.to_wallet, self.amount)
 
+    def __eq__(self, other):
+        return isinstance(other, IOU) \
+                and self.iou_type.value == other.iou_type.value \
+                and self.from_wallet.id == other.from_wallet.id \
+                and self.to_wallet.id == other.to_wallet.id \
+                and self.amount == other.amount
+
     def serialise(self) -> SerialisedState:
         """Convert state data into a generic serialised state for further handling in an abstract way by the platform"""
         return SerialisedState(
@@ -47,8 +55,11 @@ class IOU(State):
     @staticmethod
     def deserialise(dct: SerialisedState):
         """Reconstruct an IOU from a serialised state"""
-        instance = IOU(dct["state_id"], dct["public"]["iou_type"], dct["public"]["from_wallet_id"],
-                       dct["public"]["to_wallet_id"], dct["private"]["amount"])
+        instance = IOU(dct["state_id"],
+                       IOUType(dct["public"]["iou_type"]),
+                       get_wallet_for_id(dct["public"]["from_wallet_id"]),
+                       get_wallet_for_id(dct["public"]["to_wallet_id"]),
+                       Decimal(dct["private"]["amount"]))
         instance.state_id = dct["state_id"]
         return instance
 
