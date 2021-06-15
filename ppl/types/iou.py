@@ -2,9 +2,9 @@ import logging
 from decimal import Decimal
 from enum import Enum
 
-from dinero.types.state import State, SerialisedState, StateType
-from dinero.types.value_store import UOM, ValueStore
-from dinero.types.wallet import Wallet
+from ppl.types.state import State, SerialisedState, StateType
+from ppl.types.value_store import UOM, ValueStore
+from ppl.types.wallet import Wallet
 
 log = logging.getLogger("IOU")
 

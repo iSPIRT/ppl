@@ -1,6 +1,6 @@
 from enum import Enum
 
-from dinero.types.state import State
+from ppl.types.state import State
 
 
 class UOM(Enum):

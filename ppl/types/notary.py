@@ -2,17 +2,18 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from dinero.types.transaction import Transaction
+from ppl.types.transaction import Transaction
 
 if TYPE_CHECKING:
-    from dinero.types.ecosystem import Ecosystem
+    from ppl.types.ecosystem import Ecosystem
 
 import itertools
 import logging
 
-from dinero.types.iou import StateType
-from dinero.types.notary_journal import NotaryJournal
-
+from ppl.types.iou import StateType
+from ppl.types.notary_journal import NotaryJournal
+import logging.config
+logging.config.fileConfig('../logging.conf')
 log = logging.getLogger("Notary")
 
 
@@ -32,9 +33,9 @@ class Notary:
         return "N({}:{})".format(self.id, self.code)
 
     def record(self, transaction=Transaction):
-        wallet_providers = {state.from_wallet.id for state in transaction.created_states} \
-            .update({state.to_wallet.id for state in transaction.created_states})
-        log.debug("Wallet providers are {}".format(wallet_providers))
+        wallets = {state.from_wallet.id: state.from_wallet for state in transaction.created_states}
+        wallets.update({state.to_wallet.id: state.to_wallet for state in transaction.created_states})
+        log.debug("Wallet providers are {}".format(wallets))
 
     def create_iou(self, iou):
         self.states[iou.id] = iou.to_public_record()

@@ -2,7 +2,7 @@ import decimal
 import json
 from typing import Any
 
-from dinero.types.state import State, SerialisedState
+from ppl.types.state import State, SerialisedState
 
 
 class DineroEncoder(json.JSONEncoder):

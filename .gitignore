@@ -48,3 +48,8 @@ Thumbs.db
 *.mov
 *.wmv
 
+# custom
+docs/generated
+pysnark_ek
+pysnark_log
+pysnark_vk

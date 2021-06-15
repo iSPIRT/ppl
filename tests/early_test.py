@@ -1,24 +1,24 @@
 import json
-import logging.config
 import unittest
+import logging
 
-from dinero.types.ecosystem import Ecosystem
-from dinero.types.notary import Notary
-from dinero.types.public_journal import PublicJournal
-from dinero.types.state import State, deserialise_state
-from dinero.types.transaction import Transaction
-from dinero.types.value_store import UOM
-from dinero.types.wallet import Wallet
-from dinero.types.wallet_provider import WalletProvider
-from dinero.utils.customjson import DineroEncoder
+from ppl.types.ecosystem import Ecosystem
+from ppl.types.notary import Notary
+from ppl.types.public_journal import PublicJournal
+from ppl.types.state import State, deserialise_state
+from ppl.types.transaction import Transaction
+from ppl.types.value_store import UOM
+from ppl.types.wallet import Wallet
+from ppl.types.wallet_provider import WalletProvider
+from ppl.utils.customjson import DineroEncoder
 
-logging.config.fileConfig('../logging.conf')
+
 from decimal import Decimal
 
-from dinero.types.walletjournal import WalletJournal
+from ppl.types.walletjournal import WalletJournal
 
-from dinero.types.entity import CentralBank
-from dinero.types.iou import IOU, IOUType
+from ppl.types.entity import CentralBank
+from ppl.types.iou import IOU, IOUType
 
 log = logging.getLogger("Dinero")
 

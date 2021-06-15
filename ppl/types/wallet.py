@@ -1,7 +1,7 @@
 import itertools
 
-from dinero.types.wallet_provider import WalletProvider
-from dinero.utils.crypto import generate_keypair
+from ppl.types.wallet_provider import WalletProvider
+from ppl.utils.crypto import generate_keypair
 
 
 class Wallet:

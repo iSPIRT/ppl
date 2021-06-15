@@ -1,7 +1,7 @@
-from dinero.types.notary import Notary
-from dinero.types.public_journal import PublicJournal
-from dinero.types.wallet import Wallet
-from dinero.types.wallet_provider import WalletProvider
+from ppl.types.notary import Notary
+from ppl.types.public_journal import PublicJournal
+from ppl.types.wallet import Wallet
+from ppl.types.wallet_provider import WalletProvider
 
 
 class Ecosystem:

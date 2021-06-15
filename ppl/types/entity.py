@@ -1,9 +1,9 @@
 import logging
 
-from dinero.types.ecosystem import Ecosystem
-from dinero.types.wallet_provider import WalletProvider
-from dinero.utils.crypto import generate_keypair
-from dinero.types.wallet import Wallet
+from ppl.types.ecosystem import Ecosystem
+from ppl.types.wallet_provider import WalletProvider
+from ppl.utils.crypto import generate_keypair
+from ppl.types.wallet import Wallet
 
 log = logging.getLogger("Central Bank")
 
