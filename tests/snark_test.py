@@ -122,7 +122,22 @@ class QAPToolsTest(unittest.TestCase):
                 # this should give an exception if verification fails
 
     def test_trivial(self):
+        '''A trivial test that simply computes a cube
+
+        Input and output are both public. This is just to test
+        The basic functionality
+        '''
         self.do_three_phases('zkcube.py', '3')
+
+    def test_hash(self):
+        '''A minimal test with a witness
+
+        Given a public hash value, prover uses a private input to computes
+        the hash_value and checks that it matches the public value
+        '''
+        self.do_three_phases('zkhash.py',
+                             '12159113912127441302481669165612839028677601711152277646610726095099155477934',
+                             '42')
 
 
 if __name__ == '__main__':
