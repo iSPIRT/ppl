@@ -7,7 +7,7 @@ from pysnark.hash import ggh_hash, int_to_bits
 # The computation
 @snark
 def check_hash(public_hash, private_input):
-    return ggh_hash(private_input) == public_hash
+    ggh_hash(private_input).assert_eq(public_hash)
 
 
 # Supporting calculations
@@ -31,7 +31,4 @@ else:
 # Convert the second input to a private input
 private_input = [PrivVal(x) for x in int_to_bits(input_int)]
 
-if check_hash(output_hash, private_input):
-    print('Success. Check that pysnark_values does not have the private value')
-else:
-    print('Failure')
+check_hash(output_hash, private_input)
