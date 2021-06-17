@@ -16,8 +16,10 @@ logger = logging.getLogger("snark_test")
 def cd(path):
     old_dir = os.getcwd()
     os.chdir(path)
-    yield
-    os.chdir(old_dir)
+    try:
+        yield
+    finally:
+        os.chdir(old_dir)
 
 
 class QAPToolsTest(unittest.TestCase):
@@ -135,9 +137,18 @@ class QAPToolsTest(unittest.TestCase):
         Given a public hash value, prover uses a private input to computes
         the hash_value and checks that it matches the public value
         '''
+
+        # successful computation
         self.do_three_phases('zkhash.py',
                              '12159113912127441302481669165612839028677601711152277646610726095099155477934',
                              '42')
+        
+        # also confirm that 41 is not the ultimate answer
+        with self.assertRaises(Exception):
+            self.do_three_phases(
+               'zkhash.py',
+               '12159113912127441302481669165612839028677601711152277646610726095099155477934',
+               '41')
 
 
 if __name__ == '__main__':
