@@ -30,4 +30,4 @@ Run the tests:
     # created above
 
     cd ..
-    python -m unittest tests.pysnark_test
+    python -m unittest tests.snark_test
