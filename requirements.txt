@@ -1,0 +1,4 @@
+git+https://github.com/meilof/pysnark
+jwcrypto
+# python-libsnark # required if we decide to use use libsnark
+
