@@ -13,7 +13,6 @@ import logging
 from ppl.types.iou import StateType
 from ppl.types.notary_journal import NotaryJournal
 import logging.config
-logging.config.fileConfig('../logging.conf')
 log = logging.getLogger("Notary")
 
 
