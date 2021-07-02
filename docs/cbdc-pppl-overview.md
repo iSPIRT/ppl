@@ -1,194 +1,120 @@
-# Outline of a possible CBDC + Public Private Partitioned Ledger platform
+# Public Private Ledger Overview
 
--- Dhananjay Nene
+The public private ledger proposal is a privacy supporting, trust enhancing mechanism of coordinating economic activity, and information recording and sharing. What is now a PPL proposal, started out of a process to explore the domain around and figure out the appropriate model support CBDC, support data sharing between participants, and coordination and automation of event based standing instructions across events in the goods and services ecosystem and/or money flow.
 
-Status: (early draft) 
+## Current Situation
 
-v0.1 1/6/2021
+ Before we get into the structure and mechanics of PPL and how it supports the various objective a brief summary of how things stand today.
 
-As we have been going through the various discussions around CBDC some characteristics of potential use cases are emerging which can be covered through specific platform features of CBDC. Given the inter-dependencies between CBDC and other economic activities for the purposes of being able to support smart contracts, the platform itself has a broader set of capabilities that can support much more than CBDC alone. 
+**State of Digital Financial Inclusion:** India has achieved impressive numbers in terms of number of people with bank accounts (83%) and its payment infrastructure. This is a significant improvement over the recent past. However the state of broad inclusion across the board is not as impressive. For example [7% of the individuals had any kind of loan with a financial institution in 2017](https://www.statista.com/statistics/943413/india-share-people-borrow-credit-financial-institutions-by-population-type/). Some of the reasons of this imbalanced level of inclusion are unavailability of suitable financial products, digital literacy, unaffordable technology (eg smartphones), regulatory push being limited only towards reaching targets. Perhaps the elephant in the room is that given 81% population works for the informal sector and the dominance of the cash economy, most of the transactions are cash which necessarily remain outside the system and do not help in producing the necessary information collateral for a greater formal participation. 
 
-## Imperatives
+**Strong electronic payments infrastructure with high cash demand:** While on one hand India has a rather advanced payment infrastructure with multiple channels being available 24*7 and 2.7 billion transactions being conducted on UPI alone, it also has a high demand for physical cash.
 
-### Financial and Digital Inclusion:
 
-One of the biggest difficulties with cash is that it is physically disconnected from the rest of the electronic ecosystem. Thus it takes formal procedures to create business constructs such as accounts, and then at some stage physically deposit and withdraw cash. Digital currency by its very nature of existence is accessible to the electronic ecosystem, thus substantially reducing the barriers of making it interact with the rest of the ecosystem. 
 
-Note that inclusivity is not the same as inclusion. Former is the enabler. While the platform may play a significant role in catalysing inclusion, it could take more than the platform alone to do so. There are two very important elements here are 
+| Country | M0                                                       | GDP                    |        | References                                                   |
+| ------- | -------------------------------------------------------- | ---------------------- | ------ | ------------------------------------------------------------ |
+| India   | 28 Trillion Rupees<br />(*currency with public*- not M0) | 197.46 Trillion Rupees | 14.18% | https://rbi.org.in/Scripts/BS_PressReleaseDisplay.aspx?prid=51756<br />https://statisticstimes.com/economy/country/india-gdp.php |
+| UK      | 96.3 Billion GDP                                         | 1.96 Trillion GBP      | 4.9%   | https://tradingeconomics.com/united-kingdom/money-supply-m0<br />https://www.statista.com/statistics/281744/gdp-of-the-united-kingdom/ |
+| China   | 8.42 Trillion Yuan                                       | 101.6 Trillion Yuan    | 8.27%  | https://tradingeconomics.com/china/money-supply-m0<br />http://www.xinhuanet.com/english/2021-01/18/c_139677413.htm |
 
-1. The ease with which how initial KYC is done when issuing Digital Currency wallets
-2. The form factor of digital currency and how it is accessed. While for corporate accounts, digital currency could reside purely in software applications, for personal accounts, it could reside on smartphones and hardware based smart cards. The form factors are important from a psychological perspective for digital currency to be omnipresent since one form does not necessarily suit all use cases and audiences. Access and usability is important since the ability to spend or collect money *easily* when required is extremely important. While on software or smartphones this could be significantly and easily enhanced over time, it will be important to design it appropriately to cover a wide variety of use cases.
+It could be argued that one of the reasons cash continues to be in high demand is that it is extremely convenient to use especially for a number of people who do not find themselves adequately included or supported by formal banking systems for reasons of access, literacy or possession of necessary devices. Thus introduction of digital currency in India which could simultaneously help bridge some of these limitations (through usability improvements) could arguably be more beneficial than introduction of the same in other countries. 
 
-The platform then connects up the digital currency to all the other capabilities that are there. Thus at this stage currency becomes easily inclusive. Inclusion however is also a function of the apps that get build on top of it. An important consideration is to figure out what are the limitations to inclusion and can the platform address it in some form. Also that the platform is capable of supporting necessary private innovation to improve inclusion. The details of matters related to form factor, usability design, and business and technological innovation is left beyond the scope of this particular document but very relevant to the topic as a whole.
+It has also been often considered that the significantly higher level of cash is necessary because of a substantial part of the economy being what is colloquially termed as the black economy.  Estimates have ranged wildly between 7%-120% of the GDP as communicated by the revenue secretary to the Standing Committee on Finance. What can be said with confidence is that it is ***large***. In fact the very fact that estimates are wildly fluctuating is an indication of another issue, which is that cash lends itself opaque to monitoring capabilities for the purposes of compliance with law or monitoring economic activity. It could also be argued that what actually increased usage of digital currency can improve the propensity of people to further increase use of electronic channels leading to a higher utilisation of formal
 
-### Observability of economic flow:
+**Privacy:** While on one hand The Supreme Court of India has upheld the right to privacy as a fundamental right, it has acknowledged support for state action to the contrary on the grounds of doctrine of proportionality based on a three part test requiring a legitimate state aim, a legislation sanctioning the action and proportionality. There already exist a number of number of circulars issued by RBI with respect to appropriate monitoring requirements for the purposes of KYC, AML, etc. 
 
-Economic activity forms a positive spiral with information about the economic activity. The more accurate and timely information about subsets of economic activity are available, the better these can be fed into more productive economic activities once again. Thus whether at a micro (individual) or a macro (national) level, availability of such information in time can act as a boost to economic activity and a driver to make more sound investment decisions. 
+Recent public systems architectures encourage common APIs and data protocols that exchange data between the data provider and the data consumers such as GST and the Account Aggregator infrastructure. While the data consumer in one case is GST Network which is a government body and data sharing is mandated by law, in the other case there is a rather evolved infrastructure of consent capture and consent based data sharing. What is common between each of these is that even the newer class of regulated intermediaries do not get access to data even in transient terms and the data flows encrypted over the wire.
 
-There is clearly a tension here in terms of privacy. However if the platform can support much higher observability of the economic activities without compromising on privacy, it would clearly be a significant contribution towards improved economic activity. This amongst many things could include 
+**Walled Silos:** almost all the economic activity exists in the sphere of interparty transactions, these transactions exist in individual silos. Thus I might have a record of my bank account in my desktop accounting system, the bank will have a view of my transactions on its core banking system. Ditto for sales and purchase records between buyers and sellers across their ERPs or desktop or cloud based accounting packages. There is no generalised automatic way of ensuring that both these reconcile nor is there a way to easily export the data to other parties who may need parts of it on demand and given consent. There are some notable exceptions to these where the data formats are standardised (eg. [eInvoicing](https://www.gstn.org.in/e-invoicing)) or where some formal consent based data sharing (eg. [account aggregators](https://sahamati.org.in/) framework supported by [REBiT APIs](https://api.rebit.org.in/spec/aa) which are implemented frameworks or policy frameworks like [DEPA](https://www.indiastack.org/depa/))
 
-* Ability to access consent based money and goods flow records of MSMEs which can help drive better lending decisions towards the deserving.
-* Ability to leverage informal community power structures to support more reasons to do funds transfers than payments alone (eg peer to peer lending) which could in turn help observe say hypothetically at a village level how much money is flowing into or out of a village and for what reasons. (This is assuming some kind of anonymous aggregate tracking is implemented independent of that necessary for regulatory requirements)
+Another important consideration in the context of privacy is non-repudiability. Agreements between consenting parties can be treated as private, conditions such as disputes or other legal requirements may require that the details of these agreements be made available to parties with jurisdiction such as courts or arbitrators. A similar parallel could be drawn to transactions. When there is a dispute or some other reason that necessitates controlled access to the transaction data, there also then needs an ability to review and identify what is the ***correct*** data. Walled silos can make it tough and create reconciliation difficulties (he said - she said in colloquial terms). There is indeed an opportunity for stronger guaranteed verification and non repudiability of the transactions when such situations arise. 
 
-There are broader advantages to observability of economic flow in terms of being able to feed the macro economic system with more accurate aggregate and timely information. This could be either in terms of quantities (eg number of invoices issued from textile sector) or amounts, if the latter becomes feasible under the appropriate privacy regime. Also, tracking M0, M1, M2, M3, M4 can all be tracked better.
+When walled silos have to extend their scope to reach the "not-included" eg. unbanked or informal sector, each silo has to be extended independently, leading to far higher costs of being able to reach out and scale. Further since each silo is a proprietary system interconnecting these can often be another significantly expensive exercise. Also costs of such interconnection may be prohibitive for many use cases or for many smaller parties. However if such silos can reach out to a standardised platform, then not only the data sharing on demand and given consent be implemented far more efficiently, not just for the existing silos but the ecosystem as a whole. Further innovation at the edge of the platform and capability enhancements for a variety of use cases can then make the system faster, better and cheaper. 
 
-### Automation of economic activity with concomitant assurance of such automation
+**Manual baton passing:** We have in place systems that take care of one particular leg of economic activity. However there are significant constraints that require manual intervention, data re-entry or custom interchange bridges, and delays necessitated out of human intervention. Programmable money creates opportunities for automating not just the money flow but also tying it up with appropriate endpoints of goods and services flows. This can result not only in far more efficient economic activity but also more predictable outcomes thus reducing risk and encouraging investment opportunities. (eg. hypothetically, if payments to a power generation company can be made, or appropriate IOUs issued based on events related to invoicing or money receipts by discoms, that would help not just the discoms receive money sooner, but also increase the potential for more investments in power generation given the higher predictability of receipt of income). Programmable money and hops between disparate systems can offer an opportunity to improve money flows, reduce system wide float, inventory and logistics costs even as they can improve monetary and logistics predictability and confidence, eventually further reducing entry barriers to investments.
 
-Economic activity can be made much smoother if relevant activities can be fully or semi automated under prescribed conditions. eg. initiating payment or issuance of an IOU upon receipt of goods. This can be made feasible using this platform by implementation of smart contracts. While automation and productivity enhancement is an immediately visible capability, the bigger capability is in terms of the psychological assurance of a platform helping support good behaviour and flagging bad behaviour (eg repayment of loans) in realtime which can greatly improve business morale, willingness to engage with more counterparties and in general smoother business activities.
+## Towards a solution:
 
-### Integration with existing ecosystem to encourage steady migration and early leveraging of low hanging fruit
+We have reviewed the current operating situation into which we would wish to inject a set of capabilities related to CBDC, consent based data sharing and automated money and goods/services flow orchestration. 
 
-The envisaged system does not necessarily replace any pre-existing systems, but instead offers a convenient path for existing systems such a core banking, accounting or ERPs to become participants into the distributed ledger. Such participation early on could be one way publishing, but eventually could feed back information on the ledger back into the main systems. This sort of becomes a distributed, privacy maintaining bus.
+Let us consider a set of operating principles based on which the proposed solution has been evolved. 
 
-## Structure of the platform
+- **A platform to standardise to improve efficiencies and speed but delivering potential innovations at the edge:** The platform should standardise the common tasks, work out standardised protocols for communication and data sharing. However it should leave sufficient opportunity at all the endpoints for significant innovation to take place. As a specific example, the platform should focus on maximising inclusivity leaving it to applications and the businesses at the endpoints to do the necessary innovation and carry out activities to substantially increase financial inclusion.
+- **Need only data visibility:**. Given the significant importance and potential size of information being exchanged, we should restrict visibility to such data to parties with a need to know. Reducing visibility reduces the risk for data leakage, and it is best that the data itself remain with the parties rather than present an attractive central attack target for the malicious. For granular data this would include the parties participating in the transaction, and any regulatory parties as required by law. And as seen with the GST and AA implementations, intermediaries will not have any visibility into such data.
+- **Transparent rules**: The platform should work based on transparent rules to increase confidence. These should be coded into the schema design elements and be publicly visible. Thus hypothetically if digital currency transactions above say 20,000 Rupees need to be reported to a monitoring authority then there should be a clear rule visible to all which documents this fact and the destination endpoint of such reporting, and such rule definitions should drive the various components of the platform automatically.
+- **Data integrity and permanence:** The platform should support adequate audit trails, have sufficient redundancy, and have necessary continuity plans to keep track of whatever is the public data and ensure that it is not lost in case of network or business failures. 
+- **Make digital cash as easy to use as technologically feasible to cash:** Admittedly much of this will be driven by innovation on the edge. However it is important for the platform to make that process as easy as feasible.
+- **On the stack schema design, rules, and standing instructions:** Encode rules and instructions as data, so software on the stack can adapt to newer schema elements and evolving rules readily and with far less time and cost
+- **Enforce ability to record and refer to one version of truth by standardised, immutable, timestamped, signed schema records:**
+- **Use proofs to avoid data sharing. Use consent and usage constraints where it is unavoidable:**
 
-It is at this point imagined that the platform will be a combination of public and private/partitioned ledgers. The public data will be managed by a set of notaries who will perform the necessary activities to inject sufficient trust into the platform and to be able to run the smart contracts, even while retaining only partial visibility into the underlying data. The private data will be maintained by the wallet providers. 
 
-The notaries will know how to address an interact with all wallet providers and within themselves form a federated, distributed cluster of systems keeping multiple copies of the public data in a chain (blocks or not). 
 
-In general every transaction will identify the necessary wallets (and thus wallet providers) participating in the transaction. The initiating wallet provider (for one of the wallets) will interact with a notary (who could be randomly chosen since they will all be interchangeable) to submit a transaction request. The notary will ensure all wallet providers agree to the same set of data, and all necessary validations based on the underlying schema, regulations, and outstanding contracts if any are performed, and only if all tests are cleared will forward the transaction to at least two other (this could change) notaries (thus supporting digital persistence and integrity of the public information), trigger any further events as necessary, perform any smart contract activities if found appropriate and report the successful transaction back to the wallet providers. Through eventual consistency a consistent view of the public ledger will be shared across all notaries.
+## Parties in PPL Ecosystem:
 
-## Main parties
+**Entities:** These are the entities who are legal persons which would include people, companies, trusts, associations etc which participate in monetary and goods flow. Each entity will have a globally unique identifier. This could be an external or internal identifier such as an Aadhaar or GSTIN or PAN with appropriate KYC performed.
 
-### Entity: 
+**Wallet Operators:** Wallet operators are agents of the legal persons. They are thus managed by or contracted out by the entities. The corresponding tech stack could be built, purchased or outsourced by entities. They have full and complete visibility into the monetary and commercial flows that the entity is involved or associated with. The PPL model will specify the protocols / APIs / behaviours that wallet operators will support, but it would be upto the entities to ensure that wallet operators adhere to such correctly. The role of the wallet operator is to be able to interact with the rest of the ecosystem even as it instills adequate confidence in the entities that its data remains private and is shared with other parties only consistent with the instructions or consent of the entity and with the regulatory framework in place for that type of data. By default wallet operators will not require to be regulated, but such a requirement is a conditional possibility based on the nature of the data they store.
 
-Entities are legal persons. Human beings, corporations, trusts, associations etc which participate in economic activities. Each entity will have a globally unique identifier. This could be correlated with say the Aadhaar id etc for KYC purposes.
+**Notaries:** Notaries are a federated group of systems who record the existence and sequence of various states and transactions (although they do not have access to the underlying private data). They can perform critical validations necessary for correct functioning of the overall system, assert existence of transactions, and if someone has full data about the transaction, they can assert its validity. Since wallet operators or the underlying schema definition could choose some data to be public, the notaries will also in effect implement a permissioned publicly visible chain of data for such public data. It is anticipated that notaries being important to provide the necessary trust and automate behaviour through the system will be regulated entities.
 
-### Wallet providers:
+**Oracles:** These are external systems which can provide additional data related to constructs they specialise in that may be referenced on the ppl. Oracles may provide static data (eg. details of an e-invoice or eway bill given an id of the underlying instrument) or dynamic (eg. current foreign currency rate)
 
-Wallet providers will be agencies which maintain and operate a wallet on user's behalf. These could be banks, nbfcs, micro finance agencies, conventionally understood wallet providers such as PayTM etc. The responsibility of a wallet provider will be to keep detailed record of the transactions and interact with the ecosystem for appropriate purposes such as executing smart contracts. Wallet providers will not be able to update wallet transactions by themselves. Such transactions should always be initiated by a user or should be a consequence of a smart contract. There will be two types of wallet providers - a) Third party wallet providers or b) Self hosted wallet provider. The latter will allow entities higher level of control and privacy over the transactions, but this could result in transaction/aggregate limits on self hosted wallet providers for purposes of AML, Transaction Monitoring etc. The primary intent of self hosted wallets is to allow entities to interact with other peers while keeping direct control on the value/information being stored (think of it as a wallet one carries in his pocket)
 
-### Notaries:
 
-Notaries are a federated group of systems who validate state creation and transactions, and who while not storing all the data will store a fingerprint of every transaction as a chain of transactions. They can assert existence of transactions based on publicly available information, and if someone has full data about the transaction, they can assert its validity. While detailed data will be stored only by the concerned wallet providers participating in a transaction, notaries will inject necessary trust to ensure that the wallet providers cannot subsequently modify attributes of the transaction. Notaries can also be used to implement a full permissioned but publicly visible chain, if the data stored is not sensitive or private.
+## Data Constructs in PPL:
 
-## Important domain model constructs
+While there continues to be some discussion on whether some of the constructs will be token based or account based, for the purposes of this document it is assumed that where appropriate the UTXO model (Unspent Transaction Output) will be used to model value. The two most important constructs are *State* and *Transaction*.
 
-### Wallets:
+**State:** A state represents a snapshot of a piece of data at a point in time.  It could represent cash in the wallet, account balance, a liability to pay in the future, an eway bill, a contract to buy something at a future date. States may include data which is provided by oracles, by referencing the oracle and the primary identifier of that data. While we have not yet referred to it yet, such states will be stored in a wallet and will reference the wallet it is stored in. Even if the state has evolving characteristics, PPL will store data in an immutable fashion and thus a different version of that state will be stored yet again when it changes and the old version will be extinguished (or closed). 
 
-Wallets will be repository of value and/or information. Wallets could contain one or more types of value/information. Each wallet will be owned by one or more entities (in case of joint wallets). Each wallet will have a globally unique identifier. Wallets will contain value stores. In general wallet creation should be cheap and easy so that segmentation and participation in smart contracts would be easy. However wallet providers should be able to collaborate in a manner so that any total limits across wallets can be enforced. Easy wallet creation can also help tagging separate wallets eg. for intent or purpose which could allow additional validations against expenditure from or receipts into such wallets. Also meta information around wallets could help influence drive different levels of observability for economic activity and monitoring for regulatory purposes. Since the system except for regulatory purposes should be consent driven, tagging consents with wallets would be far easier than tagging individual transactions.
+**Wallet:** A wallet is a holder for a variety of states. In the wallet itself, all the details of the state, public and private, will be fully stored along with all additional attributes as required by PPL protocol. Further the wallet will be the primary vehicle through which existing systems such as core banking or logistics management systems or ERPs will export/import their data so that the same becomes interoperable with PPL as a whole. 
 
-### Value store:
+**Transaction:** A transaction is a construct which records states that are being closed and new ones that are being created as one atomic unit. Some subset of the data including the public parts of the states, and other necessary protocol required attributes will form the transaction and be shared with the notary for recording. Note that the transaction does not contain the private parts of the state. In addition to the wallets that contain the states that are a part of the transaction, additional wallets could also be specified for data sharing and regulatory purposes. In that case this transaction will be the token through notaries will ensure that the participating wallets have also received the data
 
-Value stores are information records which are owned by some wallet and have some associated value. Examples of states are IOUs, einvoices, eWay bills, etc. 
+For easier operation, PPL may pre-identify some sub-classes of states that may be widely required and used
 
-### Transaction:
+**Value Store:** This is a type of state which has an associated value. This will have at least two parts, 1) *Unit of measurement:* The unit in which the value is recorded. This could include INR, USD, etc or for that matter even BTC, ETH, Barrels of Oil or Bales of Cotton. What is important to note is that PPL will have a very agnostic view of how exactly the value is represented, so long as it is mentioned in a format that can be successfully disambiguated by PPL (and thus by user applications)
 
-A transaction will be a record of atomic collection of changes to states of various value stores
+**IOU:** An IOU is a special type of a Value store which represents both a liability and an asset on different books. Thus it reflects a future liability and may have additional attributes such as *issued at*, *callable?*, *due at*, *transferable* etc which will allow specialised activities that can be supported (eg transferring IOUs or triggering standing instructions when it becomes due).
 
-### References:
+Some others could be invoice, eway bill (which could essentially just reference the same as tracked by e-invoicing or eway bill system)
 
-References are static or dynamic pieces of information cross referenced by either a state or a smart contract. References could be value stores themselves. A value store may refer to one more references. References may have their own event transitions which are tracked by the system, and may result in smart contracts on other states dependent on such references getting triggered. An example of a dynamic reference could be stock price, or commodity price which will have to be discovered at a future point in time. At this point in time it is thought that reference would be some kind of a unique URL identifying the reference, and perhaps a resolver URL for dynamic references. References unless they are value stores will not be associated with a wallet
+**Digital Coin:** While unclear if it needs to be separate from an IOU where the issuing party is RBI, and it is measured in INR, this would effectively form the CBDC token.
 
-### IOU:
+**Smart Contract:** While this may be essentially a standing instruction in early days, over time it may also become a more complex smart contract which will trigger predetermined flows based upon pre agreed upon events. Exactly how the public / private part of the data of a smart contract will be split isn't clear yet, but all the data that is necessary for notaries to actually carry out the instructions will need to be public. 
 
-IOUs are value stores and records of a liability from the issuing wallet to the receiving wallet for a given amount of units. The owner shall be the receiving wallet id. These create and maintain a record of many of the assets and liabilities as a part of the overall economic activity. They could have a number of additional attributes such as but not limited to
+## Role of Wallet Operators:
 
-* *Issued*: Issue time
-* *Callable*: Does it require recipient explicitly calling for payment 
-* *Due*: Timestamp when it becomes due
-* *Transferable*: Can the current lender transfer it to another lender without a borrower's consent
-* *Unit of Measurement* : eg. I owe someone else 5 gms of gold. For bank accounts etc it will be the central bank currency
+As mentioned earlier wallet operators will be agents of various entities and will have full access to the private data of states and transactions. Their responsibility will include
 
-### Smart Contracts: 
+1. Create and validate states, transactions, and contracts as necessary, and exchange these with other wallet operators. 
+2. Initiating wallet will be required to sign the transaction and share the same and conditionally obtain additional signatures as might be required based on the schema rules or regulatory requirements. 
+3. Generate necessary proofs which along with the signed data will then be submitted to the registering notary
+4. Provide any additional information or proofs which may be further requested by notaries
 
-Smart contracts are pieces of computer code that are associated with events or time which trigger some activity on associated references. Thus a smart contract could be programmed to pay back certain amount of money when the IOU becomes due and is not callable. Smart Contracts will perform all pre-authorisations necessary at creation time and will have a delegated capability to perform value transfer (or any other activities) in an unattended or automated way.
+## Role of Notaries:
 
-### Digital Currency/Notes:
+Notaries will be a bunch of interchangeable and inter-operable federated services who will not have visibility into the private data of states and transactions. Some of their activities and responsibilities will include
 
-These are a special version of IOUs where the issuer is the central bank of the country. These notes will not be callable, will never become due and will be transferable, and will be denominated in central bank currency. (eg. unit of measurement would be a Rupee)
+1. Validate and record the transactions and ensure that the public details of the same will be visible on the public ledger. The exact structure of the public ledger is too early to describe yet. 
+2. Demand proofs as required by the PPL, and validate proofs as offered by the wallet operators. 
+3. Keep track of smart contracts and trigger further steps as required by the smart contract definition if applicable
 
-### Value cards:
+## Role of Proofs
 
-These would be hardware based cards (or smartphone/computer based data records + associated app) which securely store interact with remote value stores, in a wallet that is directly associated with the card. As envisaged at the moment this would need a rudimentary LCD display, basic Near Field Communication capabilities, and Yes/No/Cancel buttons. The hardware would allow appropriate records to be digitally signed and transferred to other cards. These would predominantly be reactive, and at least one out of multiple wallets in a transaction will need to be hosted by a smart phone / computer to have the necessary hardware to initiate the overall transaction. It is thought that in most cases at least one of the value cards will have active internet connectivity. Transactions can be conducted in absence of internet connectivity but will not be treated and validated until the designated value card gets some form of internet connectivity. 
+Since the system is designed to keep data private, there will be a protocol defined to allow the wallets to be able to prove some conditions about the data to the notary. This will be based on implementing some mechanism of zero knowledge proofs and at least in the short term we are looking at implementing it using ZkSnarks. Some example of proofs will be 
 
-## Additional Notes (Much of this will be detailed further .. this is all work in progress):
+1. **Digital Hash:** The hash of a particular state works out to a particular hash value. This is to ensure that at any point in time in the future, it will be possible to prove if a particular fully detailed state was indeed logged with the notary along with the audit trail of its creation and extinguishing or transition into other states if any. 
+2. **No double spend (for value stores):** This will allow the notaries to validate that the amount being spent (or value being transferred out) is backed by an existing amount (or value) being owned by the spender, and that it has not already been spent (or transferred out).
+3. **Additional proofs required for mandatory validations:** This would be specific based on the state type. Note that in general the wallet operators will be required to implement most of the basic validations, and proofs will be used only for specific validations that are necessary to ensure overall system sanity given that proofs can be significantly more expensive computations. 
 
-### 1. Schema and structure of ledger for Issuance of and transferring of digital currency and CASA operations
+## To be detailed yet
 
-* *Create value store for 1,00,000*
-
-> | State ID | State Type | IOU Type | From Wallet ID                            | To Wallet ID | UOM  | Amount |
-> | -------- | ---------- | -------- | ----------------------------------------- | ------------ | ---- | ------ |
-> | S1       | IOU        | DC       | RBI1 *(Special Wallet with Magic Powers)* | RBI1         | INR  | 100000 |
->
-> 
->
-> | Transaction ID | Dropped States | Created States |
-> | -------------- | -------------- | -------------- |
-> | T1             |                | S1             |
-
-* *Transfer 10,000 to a bank Bank1*
-
-> | State ID | State Type | IOU Type | From Wallet ID                            | To Wallet ID | UOM  | Amount |
-> | -------- | ---------- | -------- | ----------------------------------------- | ------------ | ---- | ------ |
-> | S2       | IOU        | DC       | RBI1 *(Special Wallet with Magic Powers)* | RBI1         | INR  | 90000  |
-> | S3       | IOU        | DC       | RBI1                                      | B1DC         | INR  | 10000  |
->
-> 
->
-> | Transaction ID | Dropped States | Created States |
-> | -------------- | -------------- | -------------- |
-> | T2             | S1             | S2, S3         |
-
-* *User deposits 20,000 paper currency and opens an account with B1 for 18000 Rs also transfers 2000 of digital currency to his personal wallet on card*
-
-  
-
-> | State ID | State Type | IOU Type | From Wallet ID | To Wallet ID | UOM  | Amount |
-> | -------- | ---------- | -------- | -------------- | ------------ | ---- | ------ |
-> | S4       | IOU        | BA       | B101           | U1B1         | INR  | 18000  |
-> | S5       | IOU        | DC       | RBI1           | U1P1         | INR  | 2000   |
-> | S6       | IOU        | DC       | RBI1           | B1DC         | INR  | 8000   |
->
-> 
->
-> | Transaction ID | Dropped States | Created States |
-> | -------------- | -------------- | -------------- |
-> | T3             | S3             | S4, S5, S6     |
-
-* User U1 pays User U2 1000 Rs digital currency and 4000 Rs of bank account deposit. 
-
-> | State ID | State Type | IOU Type | From Wallet ID | To Wallet ID | UOM  | Amount |
-> | -------- | ---------- | -------- | -------------- | ------------ | ---- | ------ |
-> | S7       | IOU        | BA       | B101           | U1B1         | INR  | 14000  |
-> | S8       | IOU        | DC       | B101           | U2B1         | INR  | 4000   |
-> | S9       | IOU        | DC       | RBI1           | U1P1         | INR  | 1000   |
-> | S10      | IOU        | DC       | RBI1           | U2P1         | INR  | 1000   |
->
-> 
->
-> | Transaction ID | Dropped States | Created States  |
-> | -------------- | -------------- | --------------- |
-> | T4             | S4, S5         | S7, S8, S9, S10 |
-
-### 2. Unified payments
-
-Since digital currency on a card in physical possession, bank accounts, credit card accounts, BNPL accounts, etc etc can all be represented by a combination of a IOU and a transaction on the ledger, payments become a lot more simplified since irrespective of the type of source or destination wallet, the nature of payment always remains the same, move some value from the source wallet to the destination wallet. 
-
-### 3. Sample Smart Contract
-
-This textual description is a place holder for a much more detailed explanation in data terms how exactly a smart contract could work. 
-
-For simplicity it is assumed that a PO / Invoice consists of only 1 item here. 
-
-A PO might specify an order which says the buyer B1 wishes to order an item of goods G1 of say 10 units at Rs 100 each for a total of 1000 Rs from Seller S1. The PO further specifies that any goods received but not returned within 5 days of receipt will result in an automatic creation of an IOU for the amount (1000 Rs), and the buyer supplies their wallet id and performs the necessary pre-authentication to create an IOU and eventually make the payment later on expiry of the IOU. 
-
-Assuming that the eWay bill has a reference to the PO number (or eWay -> Invoice -> PO Number) the system can now await the creation of the eWay bill, track it to its end state, and then wait another 5 days to see if the goods are being returned. If these goods are not returned, the system will initiate an IOU between the two parties. The seller could choose to finance/factor the IOU or await the payment after 45 days. The IOU is a authenticated collateral for such a transaction. On completion of 45 days, the system could initiate the auto transfer (given it has the pre-authorisation to do so) assuming there are sufficient funds in the source wallet. (This could either be digital cash or bank balance .. not material here). If there are insufficient funds, the system could first raise a credit event which could alert a number of credit monitoring sources. Further the system could make further transactions for the buyer harder by making it harder for him to conduct the business due to negatively impacted payment or collection capabilities or some other penalties until the buyer does settle the IOU. This system of additional inconveniences needs to be further explored. 
-
-In case of retail situation, one could replace the IOU with a credit card EMI charge (the pre-authorisation having been already received on dispatch of goods) or appropriate transaction on a BNPL card.
-
-### 4. Supporting of data requests
-
-#### 4.1 Authentication
-
-Any party having full access to the detailed data can request a authentication of the existence of the transaction by providing the necessary information (eg could be public attributes plus a hash of all other information) and any notary could revert with authentication of the same
-
-#### 4.2 Data requests
-
-Any party requiring access to private data after the transaction has been processed, can create a request for such information which would first need to get routed to the appropriate wallet provider(s), who would authenticate such a request. In many cases the wallet provider itself will be able to revert with most of the data (since each wallet provider retains a copy of the transaction) which can then be submitted for authentication to the notary. It could also be feasible if necessary for the source wallet provider to sign a request and then route it to counterparty wallet providers, though given that notaries can authenticate such data, it may no longer be necessary. Data requests could be useful for processes such as loan approvals etc. Further additional information such as number of wallets etc could be validated by notaries themselves based on a signed request of an entity given that notaries will have visibility into existence of all such wallets. This information could be useful to banks, NBFCs, MFAs etc etc.
-
-
+* Example of states and transactions
+* How existing systems could be enhanced to interoperate with PPL
+* Metadata repository: How schema elements, data sharing rules, proofs and other validations will be configured so notaries and wallet operators can adjust accordingly
 
 
 
