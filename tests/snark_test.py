@@ -50,6 +50,7 @@ class QAPToolsTest(unittest.TestCase):
         # with hardcoded filenames, so we do this in
         # a temporary directory
 
+        print(" # phase 0, codefile",codefile,"args",args)
         codepath = Path(__file__).parent/codefile
         with tempfile.TemporaryDirectory() as temp_root:
             # To make sure the master, prover, and verifier
@@ -84,6 +85,7 @@ class QAPToolsTest(unittest.TestCase):
 
             # phase 1, master: generate keypair
             with cd(master_dir):
+                print(" # phase 1, master: generate keypair")
                 # make sure the files don't already exist
                 for file in m2p_files + m2v_files:
                     assert(not Path(file).exists())
@@ -103,6 +105,7 @@ class QAPToolsTest(unittest.TestCase):
 
             with cd(prover_dir):
                 # phase 2, proof
+                print(" # phase 2, proof")
                 for file in p2v_files + masteronly_files:
                     assert(not Path(file).exists())
 
@@ -117,11 +120,13 @@ class QAPToolsTest(unittest.TestCase):
 
             with cd(verifier_dir):
                 # phase 3, verification
+                print(" # phase 3, verification")
                 subprocess.run((config.PYSNARK_PYTHON, '-m',
                                 'pysnark.qaptools.runqapver',
                                 codefile) + args,
                                check=True, env=self.env)
                 # this should give an exception if verification fails
+            print(" # Done")
 
     def test_trivial(self):
         '''A trivial test that simply computes a cube
@@ -150,6 +155,14 @@ class QAPToolsTest(unittest.TestCase):
                '12159113912127441302481669165612839028677601711152277646610726095099155477934',
                '41')
 
+    def test_sumcheck(self):
+        '''A test that checks if the first arg ('claim) is <= sum of second and third args
+           Second and Third argument will be private in real app
+        The basic functionality
+        '''
+        self.do_three_phases('zksumcheck.py', '100','27','73')
+        with self.assertRaises(Exception):
+            self.do_three_phases('zksumcheck.py', '101','27','73')
 
 if __name__ == '__main__':
     unittest.main()
