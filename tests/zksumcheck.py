@@ -11,11 +11,18 @@ if len(sys.argv) >= 4:
     claim = int(sys.argv[1])
     first = int(sys.argv[2])
     second= int(sys.argv[3])
-    #private_first = [PrivVal(x) for x in int_to_bits(first)]
-    #private_second = [PrivVal(x) for x in int_to_bits(second)]
     public_claim = PubVal(claim)
     private_first = PrivVal(first)
     private_second= PrivVal(second)
     sumcheck(public_claim,private_first,private_second)
+else:
+    claim = 100 
+    first = 23
+    second= 77
+    public_claim = PubVal(claim)
+    private_first = PrivVal(first)
+    private_second= PrivVal(second)
+    sumcheck(public_claim,private_first,private_second)
+
 
 

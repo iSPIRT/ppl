@@ -50,7 +50,7 @@ class QAPToolsTest(unittest.TestCase):
         # with hardcoded filenames, so we do this in
         # a temporary directory
 
-        print(" # phase 0, codefile",codefile,"args",args)
+        print(" # phase 0, codefile ",codefile,"args",args)
         codepath = Path(__file__).parent/codefile
         with tempfile.TemporaryDirectory() as temp_root:
             # To make sure the master, prover, and verifier
