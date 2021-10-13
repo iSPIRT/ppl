@@ -46,13 +46,17 @@ class Dinero(unittest.TestCase):
         serialised = json.dumps(one_lakh_issuance.serialise().to_json(), cls=DineroEncoder)
         data = json.loads(serialised)
         deserialised_state = deserialise_state(ecosystem, data)
-        log.debug("Deserialised currency object {}".format(deserialised_state))
+        print("Deserialised currency object {}".format(deserialised_state))
         self.assertEqual(one_lakh_issuance, deserialised_state,
                          "Serialised currency object is not the same as deserialised currency")
 
         created_states = [one_lakh_issuance]
         transaction = Transaction(None, created_states, "RBI issues one lakh \u20b9.")
         mi.record(transaction)
+
+    def test_contract_serialisation(self):
+        one_lakh_issuance = IOU(State.next_id(), IOUType.Currency, cb.main_wallet, cb.main_wallet, UOM.Currency_INR,
+                                Decimal("100000.00"))
 
 
 if __name__ == '__main__':
