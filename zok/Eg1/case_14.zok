@@ -1,0 +1,9 @@
+
+import "hashes/poseidon/poseidon" as poseidon
+
+def main(field[14] arr) -> field:
+     field h3 = poseidon(arr[8..14])
+     field h2 = poseidon(arr[2..8])
+     field h1 = poseidon(arr[0..2])
+     field out = poseidon([h1,h2,h3])
+     return out
