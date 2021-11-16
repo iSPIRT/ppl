@@ -35,7 +35,7 @@ Eg1 :
 
         gen_pos_14.zok, witness_gen_14 : Generated zok program and corresp witness for the zok program on execution of 
                                   the zokrates cli command sequence:
-                                  zokrates compile -i case_14.zok
+                                  zokrates compile -i gen_pos_14.zok
                                   zokrates setup
                                   zokrates compute-witness -a 0 1 2 3 4 5 6 7 8 9 10 11 12 13
                                   zokrates generate-proof
