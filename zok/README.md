@@ -32,7 +32,8 @@ Eg1 :
                                   zokrates compute-witness -a 0 1 2 3 4 5 6 7 8 9 10 11 12 13
                                   zokrates generate-proof
                                   zokrates verify
-
+                                  cp witness witness_14
+				  
         gen_pos_14.zok, witness_gen_14 : Generated zok program and corresp witness for the zok program on execution of 
                                   the zokrates cli command sequence:
                                   zokrates compile -i gen_pos_14.zok
@@ -40,8 +41,8 @@ Eg1 :
                                   zokrates compute-witness -a 0 1 2 3 4 5 6 7 8 9 10 11 12 13
                                   zokrates generate-proof
                                   zokrates verify
-
-        grepping on "out" in the two witness files confirms the same poseidon hash tree output for the same.
+                                  cp witness witness_gen_14
+        grepping on "out" in the two witness files witness_14 and witness_gen_14 confirms the same poseidon hash tree output for the same.
 
         Other such manual-generated .zoks and witnesses are :
           case_41.zok, witness_41, gen_pos_41.zok, witness_gen_41
