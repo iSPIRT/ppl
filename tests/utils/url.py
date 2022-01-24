@@ -1,0 +1,1 @@
+url="mysql+pymysql://ppltest:PPLTest#123@localhost/ppltest"

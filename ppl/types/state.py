@@ -5,7 +5,9 @@ from typing import Callable, Mapping, Any
 
 class StateType(Enum):
     """Different states can be stored on the ledger. StateType disambiguates which state is being stored"""
-    IOU = 1
+    State = "STT"
+    IOU = "IOU"
+    Contract = "CON"
 
 
 class SerialisedState:

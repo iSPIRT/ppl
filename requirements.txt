@@ -1,4 +1,7 @@
 git+https://github.com/meilof/pysnark
 jwcrypto
+sqlalchemy==1.4.22
+pymysql==1.0.2
+cryptography==3.4.7
 # python-libsnark # required if we decide to use use libsnark
 

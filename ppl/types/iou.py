@@ -15,6 +15,9 @@ class IOUType(Enum):
     AccountDeposit = 2
     Loan = 3
 
+class ContractType(Enum):
+    """A subclass of a State. These can be of multiple types"""
+    Escrow = 1
 
 class IOU(ValueStore):
     """An IOU is a subclass of State which expresses a liability from a `from_wallet` to a `to_wallet` for a given
