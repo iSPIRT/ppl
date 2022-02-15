@@ -54,3 +54,5 @@ pysnark_ek
 pysnark_log
 pysnark_vk
 tests/config.py
+
+journals/
