@@ -10,31 +10,30 @@ class Visibility(enum.Enum):
 
 
 class AttributeType(JournalEncodeable):
-    def __init__(self, id: str, name: str, visibility: Visibility = Visibility.Private):
+    def __init__(self, id: str, name: str):
         self.id = id
         self.name = name
-        self.visibility = visibility
 
-    def to_reference_dict(self):
+    def to_journal_dict(self) -> Dict[str, Any]:
         raise NotImplementedError("not implemented")
 
 
 class DecimalType(AttributeType):
-    def to_reference_dict(self):
+    def to_journal_dict(self) -> Dict[str, Any]:
         return {
             "type": "decimal",
         }
 
 
 class WalletType(AttributeType):
-    def to_reference_dict(self):
+    def to_journal_dict(self) -> Dict[str, Any]:
         return {
             "type": "wallet",
         }
 
 
 class DatetimeType(AttributeType):
-    def to_reference_dict(self):
+    def to_journal_dict(self) -> Dict[str, Any]:
         return {
             "type": "datetime",
         }
@@ -42,20 +41,19 @@ class DatetimeType(AttributeType):
 
 class PublicIdType(AttributeType):
     def __init__(self):
-        super(PublicIdType, self).__init__("http://ispirt.org/pplspecs/core/idtypes/publicid", "publicid", "Public Id")
+        super(PublicIdType, self).__init__("publicid", "Public Id")
 
     def to_journal_dict(self) -> Dict[str, Any]:
         return {
             "id": self.id,
             "name": self.name,
-            "visibility": self.visibility,
             "type": "public_id"
         }
 
 
 class AmountType(AttributeType):
     def __init__(self, uom: str, precision: int = 15):
-        super(AmountType, self).__init__("http://ispirt.org/pplspecs/core/idtypes/amount", "amount", "Amount")
+        super(AmountType, self).__init__("amount", "Amount")
         self.precision = precision
         self.uom = uom
 
@@ -63,7 +61,6 @@ class AmountType(AttributeType):
         return {
             "id": self.id,
             "name": self.name,
-            "visibility": self.visibility,
             "type": "amount",
             "precision": self.precision,
             "uom": self.uom
@@ -72,13 +69,12 @@ class AmountType(AttributeType):
 
 class NotesType(AttributeType):
     def __init__(self, maxlen: int = 256):
-        super(NotesType, self).__init__("http://ispirt.org/pplspecs/core/idtypes/notes", "notes", "Notes")
+        super(NotesType, self).__init__("notes", "Notes")
         self.maxlen = maxlen
 
     def to_journal_dict(self) -> Dict[str, Any]:
         return {
             "id": self.id,
             "name": self.name,
-            "visibility": self.visibility,
             "type": "notes"
         }
