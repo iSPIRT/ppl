@@ -1,13 +1,26 @@
+from __future__ import annotations
+
 from typing import Tuple, Dict, Any, List
 
-from badal.schema.attribute_types import AttributeType
+from badal.journal.main import Journalable
+from badal.schema.attribute_types import AttributeType, PublicIdType, AmountType, NotesType, Visibility
 from badal.schema.contracts import ContractModel
 from badal.schema.events import EventType
 from badal.schema.proofs import ProofModel
-from badal.schema.states import StateType
+from badal.schema.states import StateType, StateDetails
 from badal.schema.transactions import TransactionType
-from badal.schema.types import SpecAddress
-from badal.journal.main import Journalable
+from badal.schema.types import SpecAddress, GlobalId
+
+
+def get_attribute_type(attr_details: dict):
+    type = attr_details["type"]["type"]
+    if type == "public_id":
+        return PublicIdType()
+    elif type == "amount":
+        return AmountType(attr_details["type"]["uom"], attr_details["type"]["precision"])
+    elif type == "notes":
+        return NotesType()
+    return attr_details
 
 
 class Specification(Journalable):
@@ -23,7 +36,7 @@ class Specification(Journalable):
         self.state_types: Dict[str, StateType] = {}
         self.transaction_types: Dict[str, TransactionType] = {}
         self.depends_upon: List[SpecAddress] = []
-        self.actions  = {} # Dict[EventType, List[Predicate, Function]]
+        self.actions = {}  # Dict[EventType, List[Predicate, Function]]
 
     def add_attribute_type(self, attribute_type: AttributeType):
         self.attribute_types[attribute_type.id] = attribute_type
@@ -34,32 +47,32 @@ class Specification(Journalable):
     def add_transaction_type(self, transaction_type: TransactionType):
         self.transaction_types[transaction_type.id] = transaction_type
 
-    def to_dict(self) -> Dict[str, Any]:
-        for k, v in self.transaction_types.items():
-            print(k, v)
-        data = {
-            "uri": self.uri,
-            "name": self.name,
-            "version": self.version,
-            "contract_model": {
-                "id": self.contract_model.id,
-                "version": self.contract_model.version
-            },
-            "proof_model": {
-                "id": self.proof_model.id,
-                "version": self.proof_model.version
-            },
-            "states": {
-                k: v.to_dict() for k, v in self.state_types.items()
-            },
-            "transactions": {
-                k: v.to_dict() for k, v in self.transaction_types.items()
-            },
-            "depends_upon": [
-                self.depends_upon
-            ]
-        }
-        return "schema", data
+    # def to_dict(self) -> Dict[str, Any]:
+    #     for k, v in self.transaction_types.items():
+    #         print(k, v)
+    #     data = {
+    #         "uri": self.uri,
+    #         "name": self.name,
+    #         "version": self.version,
+    #         "contract_model": {
+    #             "id": self.contract_model.id,
+    #             "version": self.contract_model.version
+    #         },
+    #         "proof_model": {
+    #             "id": self.proof_model.id,
+    #             "version": self.proof_model.version
+    #         },
+    #         "states": {
+    #             k: v.to_dict() for k, v in self.state_types.items()
+    #         },
+    #         "transactions": {
+    #             k: v.to_dict() for k, v in self.transaction_types.items()
+    #         },
+    #         "depends_upon": [
+    #             self.depends_upon
+    #         ]
+    #     }
+    #     return "schema", data
 
     def to_journal_dict(self) -> Dict[str, Any]:
         return {
@@ -74,11 +87,38 @@ class Specification(Journalable):
                 "id": self.proof_model.id,
                 "version": self.proof_model.version
             },
-            "states": self.state_types,
-            # {
-            #     k: v.to_dict() for k, v in self.state_types.items()
-            # },
+            "state_types": {
+                k: v.to_journal_dict() for k, v in self.state_types.items()
+            },
+            "transaction_types": [
+                v.to_journal_dict() for v in self.transaction_types.values()
+            ]
         }
 
     def to_journal_stream(self) -> Tuple[str, str]:
         return "global", self.to_journal_dict()
+
+    @classmethod
+    def from_journal_dict(cls, dict: Dict[str, Any]) -> Specification:
+        spec = Specification(dict["uri"], dict["name"], dict["version"],
+                             ContractModel.from_journal_dict(dict["contract_model"]),
+                             ProofModel.from_journal_dict(dict["proof_model"]))
+        for id, state in dict["state_types"].items():
+            attributes = {}
+            state_type = StateType(id)
+            for attr in state["attributes"]:
+                state_type.add_attribute_type(
+                    attr["key"]["spec"],
+                    attr["key"]["id"],
+                    get_attribute_type(attr["value"]),
+                    attr["value"]["required"],
+                    Visibility(attr["value"]["visibility"])
+                )
+
+            spec.add_state_type(state_type)
+
+        for transaction_type in dict["transaction_types"]:
+            txn_type = TransactionType.from_journal_dict(transaction_type)
+            spec.transaction_types[txn_type.id] = txn_type
+
+        return spec
