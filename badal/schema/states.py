@@ -1,3 +1,4 @@
+import abc
 from dataclasses import dataclass
 from typing import Dict, Tuple, Any
 
@@ -12,6 +13,9 @@ class AttributeDetails(JournalEncodeable):
     type: AttributeType
     required: bool
     visibility: Visibility
+
+    def validate(self, value: Any) -> bool:
+        return self.type.validate(value)
 
     def to_journal_dict(self) -> Dict[str, Any]:
         return {

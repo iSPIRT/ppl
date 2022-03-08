@@ -5,6 +5,7 @@ from typing.io import TextIO
 
 from badal.journal.encoder import JournalEncoder
 from badal.journal.main import Journalable
+from badal.runtime.transactions import Transaction
 
 
 class Notary:
@@ -23,3 +24,6 @@ class Notary:
         if stream in self.journals:
             json.dump(value, self.journals[stream], sort_keys=True, indent=2, cls=JournalEncoder)
         return json_str
+
+    def notarise_transaction(self, transaction: Transaction):
+        print(f"Notarising transaction {transaction}")
