@@ -15,8 +15,7 @@ def get_cbdc_spec():
     spec_cbdc = Specification("ispirt.org/rbi_cbdc/spec", "RBI CBDC Schema", "0.1", solidity_one_oh,
                               zokrates_one_oh)
     cbdc_state_type = StateType("cbdc")
-    cbdc_state_type.add_attribute_type("_", "from", PublicIdType())
-    cbdc_state_type.add_attribute_type("_", "to", PublicIdType())
+    cbdc_state_type.add_attribute_type("_", "bearer", PublicIdType())
     cbdc_state_type.add_attribute_type("_", "amount", AmountType("cbdc_inr", precision=3))
     cbdc_state_type.add_attribute_type("_", "notes", NotesType(maxlen=10), visibility=Visibility.Public)
 

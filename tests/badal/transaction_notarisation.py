@@ -21,8 +21,7 @@ class TestTransactionNotarisation(unittest.TestCase):
         transaction_type = cbdc_spec.transaction_types["transfer"]
         state_type = cbdc_spec.state_types["cbdc"]
         new_money_state = create_state(state_type, {
-            "from": rbi_public,
-            "to": rbi_public,
+            "bearer": rbi_public,
             "amount": 500.00,
             "notes": "Initial Money Generation"
         })

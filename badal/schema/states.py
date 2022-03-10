@@ -1,7 +1,8 @@
 import abc
 from dataclasses import dataclass
-from typing import Dict, Tuple, Any
+from typing import Dict, Tuple, Any, List
 
+from badal.errors.Invalidity import Invalidity
 from badal.schema.attribute_types import AttributeType, Visibility
 from badal.schema.types import SpecAddress, GlobalId
 from badal.journal.encoder import JournalEncodeable
@@ -14,7 +15,7 @@ class AttributeDetails(JournalEncodeable):
     required: bool
     visibility: Visibility
 
-    def validate(self, value: Any) -> bool:
+    def validate(self, value: Any) -> List[Invalidity]:
         return self.type.validate(value)
 
     def to_journal_dict(self) -> Dict[str, Any]:
