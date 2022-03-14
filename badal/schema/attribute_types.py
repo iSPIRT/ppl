@@ -1,6 +1,8 @@
+import abc
 import enum
-from typing import Dict, Any
+from typing import Dict, Any, List
 
+from badal.errors.Invalidity import Invalidity
 from badal.journal.encoder import JournalEncodeable
 
 
@@ -9,10 +11,14 @@ class Visibility(enum.Enum):
     Public = "pub"
 
 
-class AttributeType(JournalEncodeable):
+class AttributeType(JournalEncodeable, abc.ABC):
     def __init__(self, id: str, name: str):
         self.id = id
         self.name = name
+
+    @abc.abstractmethod
+    def validate(self, value: Any) -> List[Invalidity]:
+        []
 
     def to_journal_dict(self) -> Dict[str, Any]:
         raise NotImplementedError("not implemented")
@@ -43,6 +49,9 @@ class PublicIdType(AttributeType):
     def __init__(self):
         super(PublicIdType, self).__init__("publicid", "Public Id")
 
+    def validate(self, value: Any) -> List[Invalidity]:
+        return []
+
     def to_journal_dict(self) -> Dict[str, Any]:
         return {
             "id": self.id,
@@ -56,6 +65,9 @@ class AmountType(AttributeType):
         super(AmountType, self).__init__("amount", "Amount")
         self.precision = precision
         self.uom = uom
+
+    def validate(self, value: Any) -> List[Invalidity]:
+        return []
 
     def to_journal_dict(self) -> Dict[str, Any]:
         return {
@@ -71,6 +83,13 @@ class NotesType(AttributeType):
     def __init__(self, maxlen: int = 256):
         super(NotesType, self).__init__("notes", "Notes")
         self.maxlen = maxlen
+
+    def validate(self, value: Any) -> List[Invalidity]:
+        if len(value) <= self.maxlen :
+            return []
+        else:
+            return [Invalidity("err-value-too-long", { "actual-length": len(value), "max-length": self.maxlen})]
+
 
     def to_journal_dict(self) -> Dict[str, Any]:
         return {
