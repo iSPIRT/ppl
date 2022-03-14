@@ -5,7 +5,7 @@ from Crypto.PublicKey.RSA import RsaKey
 
 from badal.notaries.notary_base import Notary
 from badal.runtime.states import State, create_state
-from badal.runtime.transactions import Transaction
+from badal.runtime.transactions import Transaction, create_transaction
 from tests.badal.schema_serialisation import get_cbdc_spec
 
 
@@ -25,7 +25,8 @@ class TestTransactionNotarisation(unittest.TestCase):
             "amount": 500.00,
             "notes": "Initial Money Generation"
         })
-        new_money = Transaction(transaction_type, [], [new_money_state])
+        new_money = create_transaction(transaction_type, [], [new_money_state])
+        new_money.sign(rbi_keypair)
         notary = Notary()
         notary.notarise_transaction(new_money)
 

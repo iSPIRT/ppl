@@ -1,7 +1,8 @@
 import uuid
 from typing import Dict, Any
 
-from badal.errors.result.ValidationError import ValidationError
+from badal.errors.result.validation_error import ValidationError
+from badal.journal.encoder import JournalEncodeable
 from badal.schema.states import StateType
 
 
@@ -15,7 +16,7 @@ def create_state(state_type: StateType, attrs: Dict[str, Any]):
 
 
 
-class State():
+class State(JournalEncodeable):
     def __init__(self, state_type: StateType, attrs: Dict[str, Any]):
         self.state_type = state_type
         self.id: str = str(uuid.uuid4())
