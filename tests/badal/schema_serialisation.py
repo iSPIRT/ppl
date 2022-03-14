@@ -1,5 +1,5 @@
-import unittest
 import json
+import unittest
 
 from badal.journal.decoder import SchemaDecoder
 from badal.notaries.notary_base import Notary
@@ -11,12 +11,26 @@ from badal.schema.states import StateType
 from badal.schema.transactions import TransactionType
 
 
+def get_cbdc_spec():
+    spec_cbdc = Specification("ispirt.org/rbi_cbdc/spec", "RBI CBDC Schema", "0.1", solidity_one_oh,
+                              zokrates_one_oh)
+    cbdc_state_type = StateType("cbdc")
+    cbdc_state_type.add_attribute_type("_", "bearer", PublicIdType())
+    cbdc_state_type.add_attribute_type("_", "amount", AmountType("cbdc_inr", precision=3))
+    cbdc_state_type.add_attribute_type("_", "notes", NotesType(maxlen=128), visibility=Visibility.Public)
+
+    spec_cbdc.add_state_type(cbdc_state_type)
+
+    cbdc_transfer_type = TransactionType("transfer")
+    cbdc_transfer_type.add_state_type("_", cbdc_state_type)
+    spec_cbdc.add_transaction_type(cbdc_transfer_type)
+    return spec_cbdc
+
+
 class TestSchemaSerialisation(unittest.TestCase):
     def test_schema_serialisation(self):
         notary = Notary()
-        spec_cbdc = Specification("ispirt.org/rbi_cbdc/spec", "RBI CBDC Schema", "0.1", solidity_one_oh,
-                                  zokrates_one_oh)
-
+        spec_cbdc = get_cbdc_spec()
 
         # Create Table cbdc
         #    column id StateId
@@ -24,17 +38,6 @@ class TestSchemaSerialisation(unittest.TestCase):
         #    column to PublicId
         #    column amount Amount
         #    public column notes Notes
-
-        cbdc_state_type = StateType("cbdc")
-        cbdc_state_type.add_attribute_type("_", "from", PublicIdType())
-        cbdc_state_type.add_attribute_type("_", "to", PublicIdType())
-        cbdc_state_type.add_attribute_type("_", "amount", AmountType("cbdc_inr", precision=3))
-        cbdc_state_type.add_attribute_type("_", "notes", NotesType(maxlen=128), visibility=Visibility.Public)
-
-        spec_cbdc.add_state_type(cbdc_state_type)
-
-        cbdc_transfer_type = TransactionType("transfer")
-        cbdc_transfer_type.add_state_type("_", cbdc_state_type)
 
         # Create Table Transfers
         #   column transaction_id TransactionId
@@ -44,7 +47,6 @@ class TestSchemaSerialisation(unittest.TestCase):
         #   column state_type StateTypeId (in this case this value will be "cbdc")
         #   column state_id StateId (refers to a state's id, in this particular case Cbdc.state_id
         #   column activity StateActivityEnum(will either be created or canceled .. only two possible values)
-
 
         #  cbdc record (state_id=1111 from="rbi" to="danny" amount=500.000)
 
@@ -56,7 +58,6 @@ class TestSchemaSerialisation(unittest.TestCase):
         # cbdc record (state_id=1112 from="rbi" to="navin" amount=300.00)
         # cbdc record (state_id=1113 from="rbi" to="danny" amount=200.00)
 
-        spec_cbdc.add_transaction_type(cbdc_transfer_type)
         cbdc_json_dict = spec_cbdc.to_journal_dict()
         cbdc_json_str = notary.notarise(spec_cbdc)
         cbdc_decoded = json.loads(cbdc_json_str, cls=SchemaDecoder)
