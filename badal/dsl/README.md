@@ -50,8 +50,9 @@ One important function of these classes is to automatically create code in the c
 
 A state has the following important properties:
 
-- method: `hash() -> StateHash` returns a collision-resistant hash and
-  preimage resistant hash of the contents of the state
+- method: `hash() -> StateHash` returns a hash of the contents of the state
+  - The hash function used will be collision resistant, preimage
+    resistant, and second preimage resistant
 - TODO: we need a mechanism to ensure that no two states can result in
   the same `StateHash`. Because of the properties of the hash function
   this can only happen if all the values of the attributes in the state
