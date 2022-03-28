@@ -12,7 +12,7 @@ The "DSL" is really just a set of Python classes which use metaprogramming to ge
 
 The DSL is primarily based on these classes: Attribute, State, Claim, Proof, Transaction, and Schema.
 
-The Attribute and State classes abstract away the details of `add_attribute_type` and `add_state_type`. Here is an example of a `State` definition using the DSL (with only a few important fields shown):
+The Attribute and State classes abstract away the details of `add_attribute_type` and `add_state_type` from `badal.schema`. Here is an example of a `State` definition using the DSL (with only a few important fields shown):
 
     :::python
     class Utxo(dsl.State):
@@ -46,6 +46,24 @@ The `Transaction` class puts it all together by extending the `TransactionCore` 
 
 One important function of these classes is to automatically create code in the chosen ZKP language (_e.g._ Zokrates or circom) to create appropriate data-structures for each attribute type, for each state type, and for the transaction core. They also create functions to initialize and manipulate these data-structures. For example, when using Zokrates, this would result in the creation of `struct owner_id_t`, `struct amount_t`, `struct utxo_t`, and `struct transfer_core_t`, along with functions `init_owner_id`, `init_amount`, `init_utxo`, and `init_transfer_core`.
 
+## Details of `State`
+
+A state has the following important properties:
+
+- method: `hash() -> StateHash` returns a collision-resistant hash and
+  preimage resistant hash of the contents of the state
+- TODO: we need a mechanism to ensure that no two states can result in
+  the same `StateHash`. Because of the properties of the hash function
+  this can only happen if all the values of the attributes in the state
+  are the same as that of another state.
+  - Note: This can be easily guaranteed by embedding a GUID in
+    each state. However, we need to be careful with stuffing
+    data members in states because each extra byte in the state
+    increases the cost of ZKP generation
+  - Does each state contain a timestamp? Is it absolutely necessary?
+  - What is the smallest nonce we can include in a state to guarantee
+    uniqueness?
+
 ## Details of `Transaction`
 
 At the wallet provider, the Transaction class has the following metadata:
@@ -62,24 +80,24 @@ At the wallet provider, the Transaction class has the following metadata:
 - claims: Tuple of names of classes representing the claims being made in this
   transaction. Each claim class will contribute code to the ZKP program
   for this transaction
-- Method: `get_signatories() -> list[PublicId]`
+- method: `get_signatories() -> list[PublicId]`
   - a method returning a list of `PublicId`s whose signatures are
     needed for the transaction to be valid.
   - TODO: the details of how this works needs to be worked out
-- Method: `get_zkp_program() -> str`
+- method: `get_zkp_program() -> str`
   - a method returning the (automatically generated) ZKP program
     corresponding to this transaction
   - See section `Proof` for details of what this ZKP program contains
   - the `proof` for a specific transaction instance will be the result
     of running this program with the private data of that transaction
-- Method: `get_transaction_core() -> TransactionCore`
+- method: `get_transaction_core() -> TransactionCore`
   - returns an instance of the `TransactionCore` populated with the
     actual input and output state instances. This is what is signed by
     the signatories for validating a transaction and this is what is
     sent to the ZKP program
   - TODO: it should return `TransferCore` not `TransactionCore`
     Need to doublecheck that this doesn't cause any problems.
-- Method: `get_zkp_program_inputs() -> list[str]`
+- method: `get_zkp_program_inputs() -> list[str]`
   - a method returning the commandline arguments to be provided to the
     `get_zkp_program()`
     - Question: should this be json instead of `list[str]`?
@@ -153,14 +171,10 @@ following components in it:
 At the notary, one a transaction has the following data:
 
 - inputs: `list[StateHash]` corresponding to states being canceled
-  - Note: Currently assuming that a `StateHash` will always be unique
-    and can thus serve as a state id. To achieve this the base `State`
-    class would need to include a nonce field to prevent accidental
-    collisions (because all the data members have the same values as
-    an older state)
-  - TODO: Actual details of the nonce need to be worked out
+  - Note: Currently assuming that a `StateHash` will always be unique.
+    See discussion under `State` for more details of this.
 - outputs: `list[StateHash]` corresponding to states being created
-- chaining pointers: TODO
+- TODO: chaining pointers: 
   - Additionally, the transaction on the ledger probably needs
     to include state hashes of earlier states or hashes of earlier
     transactions for chaining purposes. The chaining would help
