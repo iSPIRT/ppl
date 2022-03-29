@@ -16,6 +16,14 @@ Any one schema in Badal is required to use only one configuration of the ZKP par
 
 ## Building Blocks
 
+For the ZKP system in Badal, we need to decide on the following key building blocks:
+
+- One hash function: to hash states
+- Three digital signature systems: one for notary to sign transactions being put on the ledger, another for a transaction creator to sign the transaction, and the third for the other owners in a transaction to sign the transaction. (The list second and third could be combined)
+- Ability to create ZKP programs and proofs: this requires deciding the ZKP protocol, the high-level ZKP language/library, the ZKP system to be used, and other ZKP parameters
+
+These are described in detail in the following sections.
+
 ### Hash Function
 
 Badal requires the use of a hash function which is collision resistant, preimage resistant, and second preimage resistant. This is used in hashing `State`s to get `StateHash`es. The `State` data is private data which is only saved by the wallet providers or end-users while the `StateHash` is publicly stored on the ledger.
