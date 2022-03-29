@@ -181,14 +181,18 @@ The `signatures` list has the following properties:
 - The `proof` will construct the owners array and prove that every
   owner in every state exists in the owners array
 - The `proof` will also assert that
-  `signature[i] == sign(transaction_core, self.get_owners()[i])`
+  `verify_signature(transaction_core, self.get_owners()[i],
+  signature[i])` returns true. Note: the proof only verifies the
+  signature, so it only needs to know the `PublicId`s of each owner,
+  not the `PrivateId`.
 - All signatures will have to be provided externally. Badal.DSL
   does not have a way of creating the signature of the transaction.
   Typically, Badal code will output the `transaction_core` and
   the `get_owners()` list. The user has to generate the corresponding
-  signatures and input them into the system. This is because, for
-  safety, we will assume that Badal code never stores the private key
-  for any signatures.
+  signatures and input them into the system. As a result, the `PrivateId`
+  is never directly used in the ZKP program. This allows a transaction
+  creator to collect signatures of other parties whose `PrivateId` is
+  not known/revealed to the transaction owner.
 
   The wallet provider will usually have methods to save private keys
   and sign transactions, but for now we'll assume that is a separate
@@ -209,8 +213,8 @@ following components in it:
 - do the same for `output_hashes`
 - construct the owners list
 - for each owner in each state assert that it is included in the owners list
-- for each owner: compute `sign(transaction_core, owners[i])`
-  and assert that this is equal to `signatures[i]`
+- for each owner: assert that `verify_signature(transaction_core,
+  owners[i], signatures[i])` returns true
 - assertions related to the chaining pointers if necessary (see
   comment at Notary)
 
