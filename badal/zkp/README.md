@@ -28,7 +28,6 @@ Supported Hash Functions
 | Functions | Languages/Libraries | ZKP Systems | Comments                                                    |
 |-----------|---------------------|-------------|-------------------------------------------------------------|
 | SHA256    | Zokrates, ??        | All??       | Used in ZCash with an optimized circuit but still expensive |
-|-----------+---------------------+-------------+-------------------------------------------------------------|
 | Pedersen  | ??                  | ??          | ??                                                          |
 | Poseidon  | ??                  | ??          | ??                                                          |
 | MiMCHash  | ??                  | ??          | ??                                                          |
