@@ -110,44 +110,56 @@ IDs of the other owners to be provided as private inputs to the ZKP
 program (because then they would become known to the transaction
 creator). To get around this problem, the transaction creator creates
 the `transaction_core` data structure, and sends it to the other
-owners for their signatures. Each owner signs the `transaction_core`
-and sends the signature back to the transaction creator. The
-`transaction_creator` collects all these signatures and and attaches
-them along with the transaction as public inputs when submitting it to
-the Notary. In addition, the ZKP program contains code to verify that
-each of these signatures is a valid signature (this step does not require
-knowledge of the Private IDs).
+owners for their signatures. Each owner computes the hash of the
+`transaction_core`, signs this hash, and sends the signature back to
+the transaction creator. The `transaction_creator` collects all these
+signatures and and attaches them along with the transaction as public
+inputs when submitting it to the Notary. In addition, the ZKP program
+contains code to verify that each of these signatures is a valid
+signature (this step does not require knowledge of the Private IDs).
 
 Should the transaction creator provide a "direct proof" as described
 in the first paragraph, or should the transaction owner be treated as
 just another owner and its signature included in the list of
 signatures that are public inputs? The advantage of the former is that
-it would be more efficient than the latter. The advantage of the latter is
-consistency and simplicity of the code?
+(most likely ) it would be more efficient than the latter. The
+advantage of the latter is consistency and simplicity of the code?
 
 TODO: Decide whether the transaction owner will use a "direct proof"
 or a signature. Remember, it is possible that single-owner
-transactions the most common case in many schemas and hence it might
-be worth optimizing this case.
+transactions will be the most common case in many schemas and hence it
+might be worth optimizing this case.
 
 The ZKP digital signature system (used for non-transaction creator
 owners) must satisfy all the same properties as those for the standard
 digital signature described in the previous section. In addition it
 should also satisfy this:
 
-- The system must be ZKP friendly
+- The signature verificaction algorithm of this system must be ZKP friendly
+
+TODO: What signature system is ZKP friendly? Specifically this needs
+to be a standard digital signature scheme i.e. it should be possible
+for a third party to verify the validity of a signature knowing just
+the public key, and this verification algorithm must be ZKP friendly.
 
 Due to this requirement is it possible that the ZKP digital signature
 system is used is not the same as the standard digital signature
 system.
 
-If we're using the "direct proof" method the transaction creator then it has a different set of requirements. Specifically, this method is equivalent to having a HMAC keyed on the Private ID, with the following properties:
+If we're using the "direct proof" method for the transaction creator then
+it has a different set of requirements. Specifically, this method is
+equivalent to having a HMAC keyed on the Private ID, with the
+following properties:
 
 - It should be collision resistant and preimage resistant
-- It should be ZKP friendly
+- It must be ZKP friendly
 
 TODO: If we are using the "direct proof" method, then decide which
 HMAC is used for this
+
+TODO: Is it necessary for the "other owners" to sign the full
+transaction? Can we get away by having them just sign the inputs and
+outputs in which they're involved? 
 
 ## ZKP Protocols 
 
@@ -264,5 +276,25 @@ TODO: repeat with: Zokrates+Marlin, circom+Groth16, circom+PLONK.
 
 
 
+# Appendix
 
+## Rejected Ideas
 
+### Other Owners directly submitting ZKPs to the Notary instead of a designated transaction creator
+
+One possibility discussed was that of all the owners providing the
+full ZKP for the transaction and these proofs going to the Notary. I
+believe this would involve a lot of duplication of proof-generation
+effort (i.e. each owner independently proving that the sum of input
+amounts is the same as the sum of output amounts). Hence, this option
+doesn't seem worth doing.
+
+### Other Owners Using ZKP instead of digital signatures
+
+One simplification of this scheme is possible: that the transaction
+creator creates a full ZKP for the transaction, while the other owners
+create a ZKP of just the fact that that they (a) approve of the
+transaction core and (b) they know the private id associated with
+their public id. To me, prima facie it seems that this will either be
+more expensive than the digital signature based scheme, or it will end
+up being equivalent to it. 
