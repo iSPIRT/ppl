@@ -18,7 +18,7 @@ attributes of the DSL. This is similar to the way Django ORM abstracts
 away the low-level RDBMS code by using the `Model` class and related
 classes.
 
-## Core DSL Classes
+## Basic DSL Classes
 
 The DSL is primarily based on these classes: Attribute, State, Claim, Proof, Transaction, and Schema.
 
@@ -49,6 +49,7 @@ input state types and output state types for this transaction.
         outputs = dsl.Array(Utxo, type="output", max_length=2)
         # note: these are only input and output states
         # no other attributes are allowed in a TransactionCore
+
        
 The `Transaction` class puts it all together by extending the
 `TransactionCore` by adding a more data-members (specifically, the
@@ -77,10 +78,12 @@ A state has the following important properties:
 
 - method: `owners() -> list[PublicId]`
   - This method returns a list of values of attributes in this state
-    that represent _owners_ of this state. The signatures of all of these
-    are required for a transaction to be able to cancel this state.
+    that represent _owners_ of this state. The signatures of all of
+    these are required for a transaction to be able to cancel this
+    state.
     - Note: every state must have at least one owner
     - Note: there can be more than one owners
+    - 
     - TODO: we should also allow k-of-n ownership, but the details of
       how to do that need to be worked out
     - Note: It is not necessary that all the `PublicId` attributes in a state
@@ -124,14 +127,25 @@ At the wallet provider, the Transaction class has the following metadata:
     the `outputs`.
     - whether a state represents an input or an output is deduced from the
       type declaration
+  - method: `hash() -> TCHash` returns a hash of the contents of the
+    `transaction_core`
+    - The hash function can be the same as that used for `State.hash`
+    - The `StateHash` and `TCHash` types can be the same.
 
 - claims: Tuple of names of classes representing the claims being made in this
   transaction. Each claim class will contribute code to the ZKP program
   for this transaction
 
-- method: `get_owners() -> list[PublicId]`
+- method: `get_owners(creator: PublicId) -> list[PublicId]`
   - a method returning a list of `PublicId`s whose signatures are
-    needed for the transaction to be valid.
+    needed for the transaction to be valid. The `0`th element
+    of this list is guaranteed to be the transaction creator.
+    - The reason for special treatment for the transaction creator
+      is that we don't need a signature for the transaction creator.
+      A direct proof of knowledge of the private id is good enough
+      for the creator since the creator's private id can be provided
+      to the ZKP program as a private input. The same cannot be done
+      for the other owners.
   - If there are duplicates among the owners of the different input
     states, then this method will remove duplicates
   - TODO: the details of how this works needs to be worked out
@@ -145,9 +159,10 @@ At the wallet provider, the Transaction class has the following metadata:
 
 - method: `get_transaction_core() -> TransactionCore`
   - returns an instance of the `TransactionCore` populated with the
-    actual input and output state instances. This is what is signed by
-    the owners for validating a transaction and this is what is
-    sent to the ZKP program
+    actual input and output state instances. The `hash` of this
+    transaction core is signed by the owners for validating a transaction.
+    This transaction core and the corresponding signatures are the
+    private inputs to the ZKP program
   - TODO: it should return `TransferCore` not `TransactionCore`
     Need to doublecheck that this doesn't cause any problems.
 
@@ -155,9 +170,12 @@ At the wallet provider, the Transaction class has the following metadata:
   - a method returning the commandline arguments to be provided to the
     `get_zkp_program()`
     - Question: should this be json instead of `list[str]`?
-  - At a minimum, this includes the `transaction_core` as a private input
-    `input_hashes` and `output_hashes` as public inputs, the `signatures`.
-    - TODO: Decide whether `signatures` is a private or public input
+  - At a minimum, this includes the `transaction_core` and `signatures`
+    and `creator_private_id` as the private inputs and `input_hashes` and
+    `output_hashes` as public inputs
+  - Question: does this _have_ to be overridden by any subclass of the
+    `Transaction` class? Probably not: so this method can be common and
+    moved into the `Transaction` class.
 
 ## Details of `Signature`
 
@@ -175,26 +193,29 @@ The `get_owners` method has the following properties:
   state might contribute two or more.
   - TODO: We should extend this to allow more complex things like
     2-of-3 signatures
+- The 0th element of this list is the transaction creator, who does not
+  provide a signature (as discussed earlier)
 
 The `signatures` list has the following properties:
 
 - The `proof` will construct the owners array and prove that every
   owner in every state exists in the owners array
+- The `proof` will `assert HMAC(creator_private_id, 0) == owners[0]`.
 - The `proof` will also assert that
-  `verify_signature(transaction_core, self.get_owners()[i],
-  signature[i])` returns true. Note: the proof only verifies the
-  signature, so it only needs to know the `PublicId`s of each owner,
-  not the `PrivateId`.
-- All signatures will have to be provided externally. Badal.DSL
-  does not have a way of creating the signature of the transaction.
-  Typically, Badal code will output the `transaction_core` and
-  the `get_owners()` list. The user has to generate the corresponding
-  signatures and input them into the system. As a result, the `PrivateId`
-  is never directly used in the ZKP program. This allows a transaction
-  creator to collect signatures of other parties whose `PrivateId` is
-  not known/revealed to the transaction owner.
+  `verify_signature(transaction_core_hash, self.get_owners()[i],
+  signature[i])` returns true for all i > 0. Note: the proof only
+  verifies the signature, so it only needs to know the `PublicId`s
+  of each owner, not the `PrivateId`.
+- All signatures will have to be collected via out-of-band means.
+  Badal.DSL does not have a way of creating the signature of the
+  transaction. Typically, Badal code will output the `transaction_core`
+  and the `get_owners()` list. The user has to generate/collect the
+  corresponding signatures and input them into the system. As a result,
+  the `PrivateId` is never directly used in the ZKP program. This allows
+  a transaction creator to collect signatures of other parties
+  whose `PrivateId` is not known/revealed to the transaction owner.
 
-  The wallet provider will usually have methods to save private keys
+  The wallet provider will usually have methods to save private ids
   and sign transactions, but for now we'll assume that is a separate
   library.
   - For now, we're assuming that it is the job of the transaction
@@ -213,8 +234,9 @@ following components in it:
 - do the same for `output_hashes`
 - construct the owners list
 - for each owner in each state assert that it is included in the owners list
-- for each owner: assert that `verify_signature(transaction_core,
+- for each i > 0: assert that `verify_signature(transaction_core_hash,
   owners[i], signatures[i])` returns true
+- assert `HMAC(creator_private_id, 0) == owners[0]`
 - assertions related to the chaining pointers if necessary (see
   comment at Notary)
 
