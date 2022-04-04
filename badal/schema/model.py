@@ -3,8 +3,10 @@ from __future__ import annotations
 from typing import Tuple, Dict, Any, List
 
 from badal.journal.main import Journalable
-from badal.schema.attribute_types import AttributeType, PublicIdType, AmountType, NotesType, Visibility
+from badal.schema.attribute_types.base import AttributeType
+from badal.schema.attribute_types.detail_types import PublicIdType, AmountType, NotesType
 from badal.schema.contracts import ContractModel
+from badal.schema.enums import Visibility
 from badal.schema.events import EventType
 from badal.schema.proofs import ProofModel
 from badal.schema.states import StateType, StateDetails

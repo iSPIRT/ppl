@@ -1,3 +1,4 @@
+import json
 import uuid
 from typing import List, Dict, Any
 
@@ -9,6 +10,7 @@ from badal.errors.result.generic_error import GenericError
 from badal.journal.encoder import JournalEncodeable
 from badal.runtime.states import State
 from badal.schema.transactions import TransactionType
+from badal.utils.keys import key_to_hex
 
 
 def create_transaction(transaction_type: TransactionType, canceled: List[str], created: List[State]) -> "Transaction":
@@ -42,18 +44,20 @@ class Transaction(JournalEncodeable):
 
     def sign(self, key: RsaKey):
         # todo .. dict to str conversion needs to be constant
-        to_be_signed = str(self.to_journal_dict()["body"])
-        hash = SHA512.new(bytes(to_be_signed, "utf-8"))
+        to_be_signed_dict = self.to_journal_dict()["body"]
+        to_be_signed_json = json.dumps(to_be_signed_dict, indent=2)
+        hash = SHA512.new(bytes(to_be_signed_json, "utf-8"))
         signature = pkcs1_15.new(key).sign(hash).hex()
-        # todo .. get the correct form for public key
-        self.signatures[str(key.publickey)] = signature
-        print(self.to_journal_dict())
+        self.signatures[key_to_hex(key.publickey())] = signature
+        print(to_be_signed_json)
 
     def to_journal_dict(self) -> Dict[str, Any]:
         return {
             "body": {
                 "id": self.id,
-                "type": self.transaction_type.id
+                "type": self.transaction_type.id,
+                "canceled": self.canceled,
+                "created": [s.to_journal_dict() for s in self.created]
             },
             "envelope": {
                 "signatures": {k: v for k, v in self.signatures.items()}

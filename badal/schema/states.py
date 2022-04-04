@@ -3,20 +3,23 @@ from dataclasses import dataclass
 from typing import Dict, Tuple, Any, List
 
 from badal.errors.Invalidity import Invalidity
-from badal.schema.attribute_types import AttributeType, Visibility
-from badal.schema.types import SpecAddress, GlobalId
+from badal.schema.attribute_types.attribute_type_registry import registry
+from badal.schema.attribute_types.base import AttributeType
+from badal.schema.enums import Visibility
+from badal.schema.types import GlobalId
 from badal.journal.encoder import JournalEncodeable
 
 
 @dataclass
 class AttributeDetails(JournalEncodeable):
     id: str
-    type: AttributeType
+    attr_type_id: str
     required: bool
     visibility: Visibility
 
     def validate(self, value: Any) -> List[Invalidity]:
-        return self.type.validate(value)
+        print(f"Fetching {self.attr_type_id}")
+        return registry[self.attr_type_id].validate(value)
 
     def to_journal_dict(self) -> Dict[str, Any]:
         return {
@@ -34,7 +37,8 @@ class StateType(JournalEncodeable):
 
     def add_attribute_type(self, spec: str, id: str, type: AttributeType, required: bool = True,
                            visibility: Visibility = Visibility.Private):
-        self.attributes[GlobalId(spec=spec, id=id)] = AttributeDetails(id, type, required, visibility)
+        registry[type.id] = type
+        self.attributes[GlobalId(spec=spec, id=id)] = AttributeDetails(id, type.id, required, visibility)
 
     # def to_dict(self):
     #     return {

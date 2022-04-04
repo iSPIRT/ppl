@@ -3,8 +3,9 @@ import unittest
 
 from badal.journal.decoder import SchemaDecoder
 from badal.notaries.notary_base import Notary
-from badal.schema.attribute_types import PublicIdType, AmountType, NotesType, Visibility
+from badal.schema.attribute_types.detail_types import PublicIdType, AmountType, NotesType
 from badal.schema.contracts import solidity_one_oh
+from badal.schema.enums import Visibility
 from badal.schema.model import Specification
 from badal.schema.proofs import zokrates_one_oh
 from badal.schema.states import StateType
