@@ -15,11 +15,11 @@ from badal.schema.types import SpecAddress, GlobalId
 
 
 def get_attribute_type(attr_details: dict):
-    type = attr_details["type"]["type"]
+    type = attr_details["type"]
     if type == "public_id":
         return PublicIdType()
     elif type == "amount":
-        return AmountType(attr_details["type"]["uom"], attr_details["type"]["precision"])
+        return AmountType(attr_details["uom"], attr_details["precision"])
     elif type == "notes":
         return NotesType()
     return attr_details

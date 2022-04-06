@@ -3,55 +3,83 @@ from typing import Dict, Any, List
 from badal.errors.Invalidity import Invalidity
 from badal.runtime.attributes import AmountAttributeValue, PublicKeyAttributeValue, NotesAttributeValue
 from badal.schema.attribute_types.base import AttributeType
+from badal.schema.enums import Visibility
 
 
 class DecimalType(AttributeType):
+    def __init__(self, visibility: Visibility = Visibility.Private, required: bool = True):
+        super(PublicIdType, self).__init__("decimal", "Decimal", visibility, required)
+
     def to_journal_dict(self) -> Dict[str, Any]:
         return {
+            "type_id": self.id,
+            "name": self.name,
             "type": "decimal",
+            "visibility": self.visibility,
+            "required": self.required,
         }
 
-
+    def validate(self, value: Any) -> List[Invalidity]:
+        return []
 
 
 class WalletType(AttributeType):
+    def __init__(self, visibility: Visibility = Visibility.Private, required: bool = True):
+        super(PublicIdType, self).__init__("wallet_id", "Wallet ID", visibility, required)
+
     def to_journal_dict(self) -> Dict[str, Any]:
         return {
+            "type_id": self.id,
+            "name": self.name,
             "type": "wallet",
+            "visibility": self.visibility,
+            "required": self.required,
         }
 
-
+    def validate(self, value: Any) -> List[Invalidity]:
+        return []
 
 
 class DatetimeType(AttributeType):
+    def __init__(self, visibility: Visibility = Visibility.Private, required: bool = True):
+        super(PublicIdType, self).__init__("datetime", "Date Time", visibility, required)
+
     def to_journal_dict(self) -> Dict[str, Any]:
         return {
+            "type_id": self.id,
+            "name": self.name,
             "type": "datetime",
+            "visibility": self.visibility,
+            "required": self.required,
         }
 
-
+    def validate(self, value: Any) -> List[Invalidity]:
+        return []
 
 
 class PublicIdType(AttributeType):
-    def __init__(self):
-        super(PublicIdType, self).__init__("publicid", "Public Id")
+    def __init__(self, visibility: Visibility = Visibility.Private, required: bool = True):
+        super(PublicIdType, self).__init__("public_id", "Public Id", visibility, required)
 
     def validate(self, value: PublicKeyAttributeValue) -> List[Invalidity]:
         return []
 
     def to_journal_dict(self) -> Dict[str, Any]:
         return {
-            "id": self.id,
+            "type_id": self.id,
             "name": self.name,
-            "type": "public_id"
+            "type": "public_id",
+            "visibility": self.visibility,
+            "required": self.required,
         }
 
-
+    def validate(self, value: Any) -> List[Invalidity]:
+        return []
 
 
 class AmountType(AttributeType):
-    def __init__(self, uom: str, precision: int = 15):
-        super(AmountType, self).__init__("amount", "Amount")
+    def __init__(self, uom: str, precision: int = 15, visibility: Visibility = Visibility.Private, required: bool = True):
+        super(AmountType, self).__init__("amount", "Amount", visibility, required)
         self.precision = precision
         self.uom = uom
 
@@ -60,19 +88,19 @@ class AmountType(AttributeType):
 
     def to_journal_dict(self) -> Dict[str, Any]:
         return {
-            "id": self.id,
+            "type_id": self.id,
             "name": self.name,
             "type": "amount",
+            "visibility": self.visibility,
+            "required": self.required,
             "precision": self.precision,
-            "uom": self.uom
+            "uom": self.uom,
         }
 
 
-
-
 class NotesType(AttributeType):
-    def __init__(self, maxlen: int = 256):
-        super(NotesType, self).__init__("notes", "Notes")
+    def __init__(self, maxlen: int = 256, visibility: Visibility = Visibility.Private, required: bool = True):
+        super(NotesType, self).__init__("notes", "Notes", visibility, required)
         self.maxlen = maxlen
 
     def validate(self, value: NotesAttributeValue) -> List[Invalidity]:
@@ -83,9 +111,9 @@ class NotesType(AttributeType):
 
     def to_journal_dict(self) -> Dict[str, Any]:
         return {
-            "id": self.id,
+            "type_id": self.id,
             "name": self.name,
-            "type": "notes"
+            "type": "notes",
+            "visibility": self.visibility,
+            "required": self.required,
         }
-
-

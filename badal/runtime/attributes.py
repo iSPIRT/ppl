@@ -1,7 +1,9 @@
 import decimal
+from typing import List, Dict, Any
 
 from Crypto.PublicKey.RSA import RsaKey
 
+from badal.errors.Invalidity import Invalidity
 from badal.journal.values import JournalEncodeableValue
 from badal.schema.enums import Visibility
 from badal.schema.states import AttributeDetails
@@ -18,6 +20,9 @@ class PublicKeyAttributeValue(JournalEncodeableValue):
         else :
             return f"Private equivalent of {key_to_hex(self.key)}"
 
+    def validate(self, type: Dict[str, Any]) -> List[Invalidity]:
+        return []
+
 
 class AmountAttributeValue(JournalEncodeableValue):
     def __init__(self, amount: decimal.Decimal):
@@ -29,6 +34,9 @@ class AmountAttributeValue(JournalEncodeableValue):
         else :
             return f"Private equivalent of {self.amount}"
 
+    def validate(self, type: Dict[str, Any]) -> List[Invalidity]:
+        return []
+
 
 class NotesAttributeValue(JournalEncodeableValue):
     def __init__(self, text: str):
@@ -36,3 +44,6 @@ class NotesAttributeValue(JournalEncodeableValue):
 
     def to_journal_value(self, attr_details: AttributeDetails) -> str:
         return self.text
+
+    def validate(self, type: Dict[str, Any]) -> List[Invalidity]:
+        return []

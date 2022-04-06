@@ -62,4 +62,5 @@ class TestSchemaSerialisation(unittest.TestCase):
         cbdc_json_dict = spec_cbdc.to_journal_dict()
         cbdc_json_str = notary.notarise(spec_cbdc)
         cbdc_decoded = json.loads(cbdc_json_str, cls=SchemaDecoder)
+        self.maxDiff = None
         self.assertDictEqual(cbdc_json_dict, cbdc_decoded)

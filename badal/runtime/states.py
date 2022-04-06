@@ -8,7 +8,7 @@ from badal.schema.types import GlobalId
 
 
 def create_state(state_type: StateType, attrs: Dict[str, Any]):
-    validation_results = [[(k.id, err) for err in attr_details.validate(attrs[k.id])] for k, attr_details in
+    validation_results = [[(k.id, err) for err in attrs[k.id].validate(state_type.attributes[GlobalId("_", k.id)])] for k, attr_details in
                           state_type.attributes.items()]
     flattened_validation_results = [item for sublist in validation_results for item in sublist]
     if flattened_validation_results:
