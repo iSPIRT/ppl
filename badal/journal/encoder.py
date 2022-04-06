@@ -3,6 +3,7 @@ import json
 from abc import ABC
 from typing import Dict, Any
 
+
 class JournalEncodeable(ABC):
     def to_journal_dict(self) -> Dict[str, Any]:
         raise NotImplementedError("not implemented")
@@ -15,5 +16,3 @@ class JournalEncoder(json.JSONEncoder):
         elif isinstance(obj, enum.Enum):
             return obj.value
         return json.JSONEncoder.default(self, obj)
-
-

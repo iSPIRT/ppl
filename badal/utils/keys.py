@@ -1,5 +1,3 @@
-import binascii
-
 from Crypto.PublicKey.RSA import RsaKey
 
 

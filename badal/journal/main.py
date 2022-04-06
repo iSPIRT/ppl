@@ -8,4 +8,3 @@ class Journalable(JournalEncodeable, ABC):
     @abstractmethod
     def to_journal_stream(self) -> Tuple[str, str]:
         pass
-

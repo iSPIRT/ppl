@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from dataclasses import dataclass
 from typing import Dict, Any, List
 
 from badal.errors.Invalidity import Invalidity
@@ -58,7 +57,7 @@ class StateType(JournalEncodeable):
     def to_journal_dict(self) -> Dict[str, Any]:
         return {
             "id": self.id,
-            "attributes": [{"key": k, "value": v.to_journal_dict() } for k, v in self.attributes.items()]
+            "attributes": [{"key": k, "value": v.to_journal_dict()} for k, v in self.attributes.items()]
         }
 
     @classmethod

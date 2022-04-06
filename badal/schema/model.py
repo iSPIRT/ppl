@@ -9,9 +9,9 @@ from badal.schema.contracts import ContractModel
 from badal.schema.enums import Visibility
 from badal.schema.events import EventType
 from badal.schema.proofs import ProofModel
-from badal.schema.states import StateType, StateDetails
+from badal.schema.states import StateType
 from badal.schema.transactions import TransactionType
-from badal.schema.types import SpecAddress, GlobalId
+from badal.schema.types import SpecAddress
 
 
 def get_attribute_type(attr_details: dict):

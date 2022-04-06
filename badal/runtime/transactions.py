@@ -43,7 +43,6 @@ class Transaction(JournalEncodeable):
         return f"Transaction({self.transaction_type.id}:{self.id}\n  Canceled->{self.canceled}\n  Created->{self.created})"
 
     def sign(self, key: RsaKey):
-        # todo .. dict to str conversion needs to be constant
         to_be_signed_dict = self.to_journal_dict()["body"]
         to_be_signed_json = json.dumps(to_be_signed_dict, indent=2)
         hash = SHA512.new(bytes(to_be_signed_json, "utf-8"))

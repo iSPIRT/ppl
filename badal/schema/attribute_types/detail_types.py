@@ -78,7 +78,8 @@ class PublicIdType(AttributeType):
 
 
 class AmountType(AttributeType):
-    def __init__(self, uom: str, precision: int = 15, visibility: Visibility = Visibility.Private, required: bool = True):
+    def __init__(self, uom: str, precision: int = 15, visibility: Visibility = Visibility.Private,
+                 required: bool = True):
         super(AmountType, self).__init__("amount", "Amount", visibility, required)
         self.precision = precision
         self.uom = uom
