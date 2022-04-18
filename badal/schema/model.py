@@ -25,7 +25,7 @@ def get_attribute_type(attr_details: dict):
     return attr_details
 
 
-class Specification(Journalable):
+class Schema(Journalable):
     def __init__(self, uri: str, name: str, version: str, contract_model: ContractModel,
                  proof_model: ProofModel):
         self.uri = uri
@@ -101,10 +101,10 @@ class Specification(Journalable):
         return "global", self.to_journal_dict()
 
     @classmethod
-    def from_journal_dict(cls, dict: Dict[str, Any]) -> Specification:
-        spec = Specification(dict["uri"], dict["name"], dict["version"],
-                             ContractModel.from_journal_dict(dict["contract_model"]),
-                             ProofModel.from_journal_dict(dict["proof_model"]))
+    def from_journal_dict(cls, dict: Dict[str, Any]) -> Schema:
+        spec = Schema(dict["uri"], dict["name"], dict["version"],
+                      ContractModel.from_journal_dict(dict["contract_model"]),
+                      ProofModel.from_journal_dict(dict["proof_model"]))
         for id, state in dict["state_types"].items():
             attributes = {}
             state_type = StateType(id)

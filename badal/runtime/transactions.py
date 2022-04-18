@@ -48,7 +48,6 @@ class Transaction(JournalEncodeable):
         hash = SHA512.new(bytes(to_be_signed_json, "utf-8"))
         signature = pkcs1_15.new(key).sign(hash).hex()
         self.signatures[key_to_hex(key.publickey())] = signature
-        print(to_be_signed_json)
 
     def to_journal_dict(self) -> Dict[str, Any]:
         return {

@@ -6,15 +6,15 @@ from badal.notaries.notary_base import Notary
 from badal.schema.attribute_types.detail_types import PublicIdType, AmountType, NotesType
 from badal.schema.contracts import solidity_one_oh
 from badal.schema.enums import Visibility
-from badal.schema.model import Specification
+from badal.schema.model import Schema
 from badal.schema.proofs import zokrates_one_oh
 from badal.schema.states import StateType
 from badal.schema.transactions import TransactionType
 
 
 def get_cbdc_spec():
-    spec_cbdc = Specification("ispirt.org/rbi_cbdc/spec", "RBI CBDC Schema", "0.1", solidity_one_oh,
-                              zokrates_one_oh)
+    spec_cbdc = Schema("ispirt.org/rbi_cbdc/spec", "RBI CBDC Schema", "0.1", solidity_one_oh,
+                       zokrates_one_oh)
     cbdc_state_type = StateType("cbdc")
     cbdc_state_type.add_attribute_type("_", "bearer", PublicIdType())
     cbdc_state_type.add_attribute_type("_", "amount", AmountType("cbdc_inr", precision=3))
@@ -61,6 +61,7 @@ class TestSchemaSerialisation(unittest.TestCase):
 
         cbdc_json_dict = spec_cbdc.to_journal_dict()
         cbdc_json_str = notary.notarise(spec_cbdc)
+        print(cbdc_json_str)
         cbdc_decoded = json.loads(cbdc_json_str, cls=SchemaDecoder)
         self.maxDiff = None
         self.assertDictEqual(cbdc_json_dict, cbdc_decoded)

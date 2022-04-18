@@ -26,4 +26,5 @@ class Notary:
         return json_str
 
     def notarise_transaction(self, transaction: Transaction):
-        print(f"Notarising transaction {transaction}")
+        txn_json = json.dumps(transaction.to_journal_dict(), indent=2)
+        print(f"Notarising transaction {txn_json}")
