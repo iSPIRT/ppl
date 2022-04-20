@@ -2,6 +2,7 @@ import json
 import unittest
 
 from badal.journal.decoder import SchemaDecoder
+from badal.journal.encoder import JournalType
 from badal.notaries.notary_base import Notary
 from badal.schema.attribute_types.detail_types import PublicIdType, AmountType, NotesType
 from badal.schema.contracts import solidity_one_oh
@@ -32,7 +33,7 @@ class TestSchemaSerialisation(unittest.TestCase):
     def test_schema_serialisation(self):
         notary = Notary()
         spec_cbdc = get_cbdc_spec()
-
+        proof_runtime = spec_cbdc.proof_model.get_proof_runtime()
         # Create Table cbdc
         #    column id StateId
         #    column from PublicId
@@ -59,8 +60,8 @@ class TestSchemaSerialisation(unittest.TestCase):
         # cbdc record (state_id=1112 from="rbi" to="navin" amount=300.00)
         # cbdc record (state_id=1113 from="rbi" to="danny" amount=200.00)
 
-        cbdc_json_dict = spec_cbdc.to_journal_dict()
-        cbdc_json_str = notary.notarise(spec_cbdc)
+        cbdc_json_dict = spec_cbdc.to_journal_dict(JournalType.Private, proof_runtime)
+        cbdc_json_str = notary.notarise(spec_cbdc, JournalType.Private, proof_runtime)
         print(cbdc_json_str)
         cbdc_decoded = json.loads(cbdc_json_str, cls=SchemaDecoder)
         self.maxDiff = None

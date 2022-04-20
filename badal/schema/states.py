@@ -2,7 +2,8 @@ from dataclasses import dataclass
 from typing import Dict, Any, List
 
 from badal.errors.Invalidity import Invalidity
-from badal.journal.encoder import JournalEncodeable
+from badal.journal.encoder import JournalEncodeable, JournalType
+from badal.runtime.proofs.main import ProofRuntime
 from badal.schema.attribute_types.attribute_type_registry import registry
 from badal.schema.attribute_types.base import AttributeType
 from badal.schema.enums import Visibility
@@ -20,7 +21,7 @@ class AttributeDetails(JournalEncodeable):
         print(f"Fetching {self.attr_type_id}")
         return registry[self.attr_type_id].validate(value)
 
-    def to_journal_dict(self) -> Dict[str, Any]:
+    def to_journal_dict(self, journal_type: JournalType, proof_runtime: ProofRuntime) -> Dict[str, Any]:
         return {
             "id": self.id,
             "type": self.attr_type_id,
@@ -54,10 +55,10 @@ class StateType(JournalEncodeable):
     #         "attributes": {key: val.to_reference_dict() for key, val in self.attributes.items()},
     #     }
 
-    def to_journal_dict(self) -> Dict[str, Any]:
+    def to_journal_dict(self, journal_type: JournalType, proof_runtime: ProofRuntime) -> Dict[str, Any]:
         return {
             "id": self.id,
-            "attributes": [{"key": k, "value": v.to_journal_dict()} for k, v in self.attributes.items()]
+            "attributes": [{"key": k, "value": v.to_journal_dict(journal_type, proof_runtime)} for k, v in self.attributes.items()]
         }
 
     @classmethod
@@ -72,7 +73,7 @@ class StateDetails:
     allow_cancel: bool
     allow_create: bool
 
-    def to_journal_dict(self) -> Dict[str, Any]:
+    def to_journal_dict(self, journal_type: JournalType, proof_runtime: ProofRuntime) -> Dict[str, Any]:
         return {
             "spec": self.spec,
             "state_type": self.state_type,

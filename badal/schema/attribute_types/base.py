@@ -2,8 +2,10 @@ import abc
 from typing import Dict, Any, List
 
 from badal.errors.Invalidity import Invalidity
-from badal.journal.encoder import JournalEncodeable
+from badal.journal.encoder import JournalEncodeable, JournalType
+from badal.runtime.proofs.main import ProofRuntime
 from badal.schema.enums import Visibility
+from badal.schema.proofs import ProofModel
 
 
 class AttributeType(JournalEncodeable, abc.ABC):
@@ -27,5 +29,5 @@ class AttributeType(JournalEncodeable, abc.ABC):
     def validate(self, value: Any) -> List[Invalidity]:
         []
 
-    def to_journal_dict(self) -> Dict[str, Any]:
+    def to_journal_dict(self, journal_type: JournalType, proof_runtime: ProofRuntime) -> Dict[str, Any]:
         raise NotImplementedError("not implemented")

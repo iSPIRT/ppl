@@ -1,7 +1,9 @@
 from typing import Dict, Any, List
 
 from badal.errors.Invalidity import Invalidity
+from badal.journal.encoder import JournalType
 from badal.runtime.attributes import AmountAttributeValue, PublicKeyAttributeValue, NotesAttributeValue
+from badal.runtime.proofs.main import ProofRuntime
 from badal.schema.attribute_types.base import AttributeType
 from badal.schema.enums import Visibility
 
@@ -10,7 +12,7 @@ class DecimalType(AttributeType):
     def __init__(self, visibility: Visibility = Visibility.Private, required: bool = True):
         super(PublicIdType, self).__init__("decimal", "Decimal", visibility, required)
 
-    def to_journal_dict(self) -> Dict[str, Any]:
+    def to_journal_dict(self, journal_type: JournalType, proof_runtime: ProofRuntime) -> Dict[str, Any]:
         return {
             "type_id": self.id,
             "name": self.name,
@@ -27,7 +29,7 @@ class WalletType(AttributeType):
     def __init__(self, visibility: Visibility = Visibility.Private, required: bool = True):
         super(PublicIdType, self).__init__("wallet_id", "Wallet ID", visibility, required)
 
-    def to_journal_dict(self) -> Dict[str, Any]:
+    def to_journal_dict(self, journal_type: JournalType, proof_runtime: ProofRuntime) -> Dict[str, Any]:
         return {
             "type_id": self.id,
             "name": self.name,
@@ -44,7 +46,7 @@ class DatetimeType(AttributeType):
     def __init__(self, visibility: Visibility = Visibility.Private, required: bool = True):
         super(PublicIdType, self).__init__("datetime", "Date Time", visibility, required)
 
-    def to_journal_dict(self) -> Dict[str, Any]:
+    def to_journal_dict(self, journal_type: JournalType, proof_runtime: ProofRuntime) -> Dict[str, Any]:
         return {
             "type_id": self.id,
             "name": self.name,
@@ -64,7 +66,7 @@ class PublicIdType(AttributeType):
     def validate(self, value: PublicKeyAttributeValue) -> List[Invalidity]:
         return []
 
-    def to_journal_dict(self) -> Dict[str, Any]:
+    def to_journal_dict(self, journal_type: JournalType, proof_runtime: ProofRuntime) -> Dict[str, Any]:
         return {
             "type_id": self.id,
             "name": self.name,
@@ -87,7 +89,7 @@ class AmountType(AttributeType):
     def validate(self, value: AmountAttributeValue) -> List[Invalidity]:
         return []
 
-    def to_journal_dict(self) -> Dict[str, Any]:
+    def to_journal_dict(self, journal_type: JournalType, proof_runtime: ProofRuntime) -> Dict[str, Any]:
         return {
             "type_id": self.id,
             "name": self.name,
@@ -110,7 +112,7 @@ class NotesType(AttributeType):
         else:
             return [Invalidity("err-value-too-long", {"actual-length": len(value.text), "max-length": self.maxlen})]
 
-    def to_journal_dict(self) -> Dict[str, Any]:
+    def to_journal_dict(self, journal_type: JournalType, proof_runtime: ProofRuntime) -> Dict[str, Any]:
         return {
             "type_id": self.id,
             "name": self.name,

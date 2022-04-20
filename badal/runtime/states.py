@@ -2,7 +2,9 @@ import uuid
 from typing import Dict, Any
 
 from badal.errors.result.validation_error import ValidationError
-from badal.journal.encoder import JournalEncodeable
+from badal.journal.encoder import JournalEncodeable, JournalType
+from badal.runtime.proofs.main import ProofRuntime
+from badal.schema.proofs import ProofModel
 from badal.schema.states import StateType
 from badal.schema.types import GlobalId
 
@@ -30,10 +32,10 @@ class State(JournalEncodeable):
     def __repr__(self):
         return f"State({self.state_type.id}:{self.id})"
 
-    def to_journal_dict(self) -> Dict[str, Any]:
+    def to_journal_dict(self, journal_type: JournalType, proof_runtime: ProofRuntime) -> Dict[str, Any]:
         return {
             "id": self.id,
             "type": self.state_type.id,
-            "attrs": {k: v.to_journal_value(self.state_type.attributes[GlobalId("_", k)]) for k, v in
+            "attrs": {k: v.to_journal_value(self.state_type.attributes[GlobalId("_", k)], journal_type, proof_runtime) for k, v in
                       self.attrs.items()}
         }

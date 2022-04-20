@@ -2,7 +2,9 @@ from __future__ import annotations
 
 from typing import Tuple, Dict, Any, List
 
+from badal.journal.encoder import JournalType
 from badal.journal.main import Journalable
+from badal.runtime.proofs.main import ProofRuntime
 from badal.schema.attribute_types.base import AttributeType
 from badal.schema.attribute_types.detail_types import PublicIdType, AmountType, NotesType
 from badal.schema.contracts import ContractModel
@@ -76,7 +78,7 @@ class Schema(Journalable):
     #     }
     #     return "schema", data
 
-    def to_journal_dict(self) -> Dict[str, Any]:
+    def to_journal_dict(self, journal_type: JournalType, proof_runtime: ProofRuntime) -> Dict[str, Any]:
         return {
             "uri": self.uri,
             "name": self.name,
@@ -90,15 +92,15 @@ class Schema(Journalable):
                 "version": self.proof_model.version
             },
             "state_types": {
-                k: v.to_journal_dict() for k, v in self.state_types.items()
+                k: v.to_journal_dict(journal_type, proof_runtime) for k, v in self.state_types.items()
             },
             "transaction_types": [
-                v.to_journal_dict() for v in self.transaction_types.values()
+                v.to_journal_dict(journal_type, proof_runtime) for v in self.transaction_types.values()
             ]
         }
 
-    def to_journal_stream(self) -> Tuple[str, str]:
-        return "global", self.to_journal_dict()
+    def to_journal_stream(self, journal_type: JournalType, proof_runtime: ProofRuntime) -> Tuple[str, str]:
+        return "global", self.to_journal_dict(journal_type, proof_runtime)
 
     @classmethod
     def from_journal_dict(cls, dict: Dict[str, Any]) -> Schema:
