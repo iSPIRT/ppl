@@ -1,0 +1,31 @@
+
+import "hashes/poseidon/poseidon" as poseidon 
+import "utils/casts/u32_to_field" as u32_to_field
+import "utils/casts/field_to_u32" as field_to_u32
+
+
+const u32 N = 14 
+const u32 INTERNAL_NODES = 4
+const u32[INTERNAL_NODES] HashSeq = [6, 6, 2, 3]
+
+def main(field[N] OrigInp) -> field:
+    u32 HeapSz = INTERNAL_NODES+N
+    field[HeapSz] Heap = [0; HeapSz]
+    //Initialize to 0 field
+
+    u32 j = 0
+    for u32 i in 0..N do
+       j = (HeapSz-1)-i
+       Heap[j]=OrigInp[(N-1)-i]
+    endfor
+    //The last N nodes of the Heap field array are set to the input fields
+
+    u32 leftChildOffset = HeapSz
+    u32 parent = INTERNAL_NODES
+    for u32 i in 0..INTERNAL_NODES do
+       parent = parent-1
+       leftChildOffset = leftChildOffset-HashSeq[i]
+       Heap[parent] = poseidon(Heap[leftChildOffset..leftChildOffset+HashSeq[i]])
+    endfor
+    return Heap[0]
+
