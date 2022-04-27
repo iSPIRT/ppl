@@ -2,7 +2,8 @@ from __future__ import annotations
 
 from typing import Dict, Any
 
-from badal.journal.encoder import JournalEncodeable
+from badal.journal.encoder import JournalEncodeable, JournalType
+from badal.runtime.proofs.main import ProofRuntime
 
 
 class ContractModel(JournalEncodeable):
@@ -10,7 +11,7 @@ class ContractModel(JournalEncodeable):
         self.id = id
         self.version = version
 
-    def to_journal_dict(self) -> Dict[str, Any]:
+    def to_journal_dict(self, journal_type: JournalType, proof_runtime: ProofRuntime) -> Dict[str, Any]:
         return {
             "id": self.id,
             "version": self.version,

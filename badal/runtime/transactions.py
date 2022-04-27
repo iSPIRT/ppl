@@ -1,3 +1,4 @@
+import json
 import uuid
 from typing import List, Dict, Any
 
@@ -6,9 +7,11 @@ from Crypto.PublicKey.RSA import RsaKey
 from Crypto.Signature import pkcs1_15
 
 from badal.errors.result.generic_error import GenericError
-from badal.journal.encoder import JournalEncodeable
+from badal.journal.encoder import JournalEncodeable, JournalType
+from badal.runtime.proofs.main import ProofRuntime
 from badal.runtime.states import State
 from badal.schema.transactions import TransactionType
+from badal.utils.keys import key_to_hex
 
 
 def create_transaction(transaction_type: TransactionType, canceled: List[str], created: List[State]) -> "Transaction":
@@ -40,20 +43,20 @@ class Transaction(JournalEncodeable):
     def __str__(self):
         return f"Transaction({self.transaction_type.id}:{self.id}\n  Canceled->{self.canceled}\n  Created->{self.created})"
 
-    def sign(self, key: RsaKey):
-        # todo .. dict to str conversion needs to be constant
-        to_be_signed = str(self.to_journal_dict()["body"])
-        hash = SHA512.new(bytes(to_be_signed, "utf-8"))
+    def sign(self, key: RsaKey, journal_type: JournalType, proof_runtime: ProofRuntime):
+        to_be_signed_dict = self.to_journal_dict(journal_type, proof_runtime)["body"]
+        to_be_signed_json = json.dumps(to_be_signed_dict, indent=2)
+        hash = SHA512.new(bytes(to_be_signed_json, "utf-8"))
         signature = pkcs1_15.new(key).sign(hash).hex()
-        # todo .. get the correct form for public key
-        self.signatures[str(key.publickey)] = signature
-        print(self.to_journal_dict())
+        self.signatures[key_to_hex(key.publickey())] = signature
 
-    def to_journal_dict(self) -> Dict[str, Any]:
+    def to_journal_dict(self, journal_type: JournalType, proof_runtime: ProofRuntime) -> Dict[str, Any]:
         return {
             "body": {
                 "id": self.id,
-                "type": self.transaction_type.id
+                "type": self.transaction_type.id,
+                "canceled": self.canceled,
+                "created": [s.to_journal_dict(journal_type, proof_runtime) for s in self.created]
             },
             "envelope": {
                 "signatures": {k: v for k, v in self.signatures.items()}

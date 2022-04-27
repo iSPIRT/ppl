@@ -10,7 +10,7 @@ from badal.journal.decoder import SchemaDecoder
 from badal.notaries.notary_base import Notary
 from badal.schema.attribute_types import PublicIdType, AmountType, NotesType, Visibility
 from badal.schema.contracts import solidity_one_oh
-from badal.schema.model import Specification
+from badal.schema.model import Schema
 from badal.schema.proofs import zokrates_one_oh
 from badal.schema.states import StateType
 from badal.schema.transactions import TransactionType
@@ -47,8 +47,8 @@ if __name__ == "__main__":
     # bank_id = RsaPplId(generate_keypair())
     # person1_id = RsaPplId(generate_keypair())
 
-    spec_core = Specification("http://ispirt.org/pplspecs/core", "PPL Core Schema", "0.1", solidity_one_oh,
-                              zokrates_one_oh)
+    spec_core = Schema("http://ispirt.org/pplspecs/core", "PPL Core Schema", "0.1", solidity_one_oh,
+                       zokrates_one_oh)
     ## we need a capability to add meta attribute types here .. eg.
     ## This feature is available only for the global root specification since it requires addition of IdType classes
     ## with behaviours. Other specs cannot add this. However the id can then be used instead of instantiating the class
@@ -63,8 +63,8 @@ if __name__ == "__main__":
 
     notary.notarise(spec_core)
 
-    spec_cbdc = Specification("http://ispirt.org/rbi_cbdc/spec", "RBI CBDC Schema", "0.1", solidity_one_oh,
-                              zokrates_one_oh)
+    spec_cbdc = Schema("http://ispirt.org/rbi_cbdc/spec", "RBI CBDC Schema", "0.1", solidity_one_oh,
+                       zokrates_one_oh)
 
     cbdc_state_type = StateType("cbdc")
     cbdc_state_type.add_attribute_type("_", "from", PublicIdType())

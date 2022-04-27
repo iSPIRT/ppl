@@ -1,14 +1,16 @@
 from dataclasses import dataclass
-from typing import Dict, Tuple
+from typing import Dict
 
+from badal.journal.encoder import JournalType
+from badal.runtime.proofs.main import ProofRuntime
 from badal.schema.states import StateDetails, StateType
-from badal.schema.types import SpecAddress, GlobalId
+from badal.schema.types import GlobalId
 
 
 class TransactionType:
     def __init__(self, id: str):
         self.id = id
-        self.states: Dict[GlobalId, StateDetails] =  {}
+        self.states: Dict[GlobalId, StateDetails] = {}
 
     def __str__(self):
         return f"TransactionType({self.id})"
@@ -18,10 +20,10 @@ class TransactionType:
         sd = StateDetails(spec, state_type.id, allow_cancel, allow_create)
         self.states[state_type_id] = sd
 
-    def to_journal_dict(self):
+    def to_journal_dict(self, journal_type: JournalType, proof_runtime: ProofRuntime):
         return {
             "id": self.id,
-            "states": [ v.to_journal_dict()  for v in self.states.values()]
+            "states": [v.to_journal_dict(journal_type, proof_runtime) for v in self.states.values()]
         }
 
     @classmethod

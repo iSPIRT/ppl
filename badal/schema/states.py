@@ -1,27 +1,30 @@
-import abc
 from dataclasses import dataclass
-from typing import Dict, Tuple, Any, List
+from typing import Dict, Any, List
 
 from badal.errors.Invalidity import Invalidity
-from badal.schema.attribute_types import AttributeType, Visibility
-from badal.schema.types import SpecAddress, GlobalId
-from badal.journal.encoder import JournalEncodeable
+from badal.journal.encoder import JournalEncodeable, JournalType
+from badal.runtime.proofs.main import ProofRuntime
+from badal.schema.attribute_types.attribute_type_registry import registry
+from badal.schema.attribute_types.base import AttributeType
+from badal.schema.enums import Visibility
+from badal.schema.types import GlobalId
 
 
 @dataclass
 class AttributeDetails(JournalEncodeable):
     id: str
-    type: AttributeType
+    attr_type_id: str
     required: bool
     visibility: Visibility
 
     def validate(self, value: Any) -> List[Invalidity]:
-        return self.type.validate(value)
+        print(f"Fetching {self.attr_type_id}")
+        return registry[self.attr_type_id].validate(value)
 
-    def to_journal_dict(self) -> Dict[str, Any]:
+    def to_journal_dict(self, journal_type: JournalType, proof_runtime: ProofRuntime) -> Dict[str, Any]:
         return {
             "id": self.id,
-            "type": self.type.to_journal_dict(),
+            "type": self.attr_type_id,
             "required": self.required,
             "visibility": self.visibility
         }
@@ -30,11 +33,13 @@ class AttributeDetails(JournalEncodeable):
 class StateType(JournalEncodeable):
     def __init__(self, id: str):
         self.id = id
-        self.attributes: Dict[GlobalId, AttributeDetails] = {}
+        # self.attributes: Dict[GlobalId, Dict[str, Any]] = {}
+        self.attributes: Dict[GlobalId, AttributeType] = {}
 
     def add_attribute_type(self, spec: str, id: str, type: AttributeType, required: bool = True,
                            visibility: Visibility = Visibility.Private):
-        self.attributes[GlobalId(spec=spec, id=id)] = AttributeDetails(id, type, required, visibility)
+        registry[type.id] = type
+        self.attributes[GlobalId(spec=spec, id=id)] = type
 
     # def to_dict(self):
     #     return {
@@ -50,10 +55,10 @@ class StateType(JournalEncodeable):
     #         "attributes": {key: val.to_reference_dict() for key, val in self.attributes.items()},
     #     }
 
-    def to_journal_dict(self) -> Dict[str, Any]:
+    def to_journal_dict(self, journal_type: JournalType, proof_runtime: ProofRuntime) -> Dict[str, Any]:
         return {
             "id": self.id,
-            "attributes": [{"key": k, "value": v.to_journal_dict()} for k, v in self.attributes.items()]
+            "attributes": [{"key": k, "value": v.to_journal_dict(journal_type, proof_runtime)} for k, v in self.attributes.items()]
         }
 
     @classmethod
@@ -68,7 +73,7 @@ class StateDetails:
     allow_cancel: bool
     allow_create: bool
 
-    def to_journal_dict(self) -> Dict[str, Any]:
+    def to_journal_dict(self, journal_type: JournalType, proof_runtime: ProofRuntime) -> Dict[str, Any]:
         return {
             "spec": self.spec,
             "state_type": self.state_type,
