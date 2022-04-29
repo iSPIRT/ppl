@@ -49,15 +49,88 @@ def is_attribute(attr_value: Any) -> TypeGuard[Attribute]:
     return isinstance(attr_value, Attribute)
 
 
-class State:
-    
-
+class PublicId:
     ...
-    
+
+
+class RandomBits:
+    '''For nonces'''
+    ...
+
+
+class StateMetaInfo:
+    '''Stores meta information about a state subclass: like attributes etc'''
+    def __init__(self) -> None:
+        self.attributes: dict[str, 'Attribute'] = {}
+
+    def add_attribute(self, name: str, attribute: 'Attribute') -> None:
+        # Django uses a sorted list; I don't see why we shouldn't use a dict
+        self.attributes[name] = attribute
+
+
+class StateMetaclass(type):
+    '''Metaclass for State
+
+    Whenever we create a new class S derived from
+    State, an S._meta = StateMetaInfo() is created
+    and then all the attributes of S which are 
+    instances of Attribute are actually added to
+    S._meta.attributes 
+
+    Later, when we create instances of S, the 
+    contents of S.attributes will be used to decide
+    how to convert the attribute values to and from json
+    and to and from Zokrates data types and in general
+    will know how to deal with the attribute values
+    because the attribute type and the additional parameters
+    (like precision) are stored in S.attributes
+
+    TODO: In the long term, State should allow abstract and proxy 
+    states for composability. 
+    But, this can get surprisingly tricky, so probably better to do 
+    this at a later stage.
+    See: https://medium.com/swlh/how-django-use-data-descriptors-metaclasses-for-data-modelling-14b307280fce 
+    for a discussion of what all Django has to handle while doing
+    this
+    '''
+    def __new__(mcls, name, bases, attrs, **kwargs):
+        # Don't do any special processing for State
+        # We only want to do special processing for classes
+        # derived from State.
+        # parents will be empty only for State
+        # All others will have at least State as a parent
+        parents = [b for b in bases if isinstance(b, StateMetaclass)]
+        if not parents:
+            return super().__new__(mcls, name, bases, attrs)
+
+        # Separate the special attributes (which have meta meaning)
+        # from the regular attributes
+        meta_attrs: dict[str, Attribute] = {}
+        regular_attrs: dict[str, object] = {}
+
+        for obj_name, obj in attrs.items():
+            if is_attribute(obj):
+                meta_attrs[obj_name] = obj
+            else:
+                regular_attrs[obj_name] = obj
+
+        new_class = super().__new__(mcls, name, bases, regular_attrs, **kwargs)
+        new_class._meta = StateMetaInfo()
+
+        for obj_name, obj in meta_attrs.items():
+            obj.add_to_statemeta(new_class, obj_name)
+
+
+
+class State(metaclass=StateMetaclass):
+    # See `class Utxo` in README.md for example of how to use this
+    owner: PublicId
+    nonce: RandomBits
+    ...
+
 
 class ZKPSystem:
-    def 
-
+   ...
 
 
 class Claim:
@@ -125,19 +198,13 @@ class Signature:
 
 class Transaction:
     '''
-    Every transaction has a list of input states (which will be caceled), 
-    a list of output states (which are being created), and a 
-    list of claims (for which proofs need to be submitted)
-
-    In addition to the listed claims, every transaction has an implict 
+    See `class Transfer` in README.md for an example of how to use this
     '''
-    ...
-    inputs: list[State]
-    outputs: list[State]
-
-    claims: tuple[Claim]
+    creator: PublicId
     signatures: list[Signature]
-
+    proof: Proof
+    # inputs, outputs, claims to be defined by subclass
+    
     def create_txn_binary_type(self):
         '''
         Create transaction binary datatype
