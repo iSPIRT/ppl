@@ -71,6 +71,7 @@
       proof provider cannot skip states
   * Design the algorithm for the aggregate proof
   * Implement in any one: Zokrates of Circom
+  * Figure out how the prover/verifier key creation will work in this case
 * Circom implementation of a stablecoin
   * Similar to Zokrates
   * Supported schemes and hash functions will be different
