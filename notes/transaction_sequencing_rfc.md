@@ -45,14 +45,13 @@ Step 3 computes the aggregate and step 4 ensures that none of the transactions c
 
 We define a new `State` called a `SequenceState`. This state contains a sequence number and wallet id. We define a new `Transaction` called `ExtendSequence` which creates a new `SequenceState` (containing a new sequence number), and references the previous `SequenceState`. The proof for this transaction proves that the sequence number in this state is 1 more than the sequence number in the previous `SequenceState` referenced.
 
-Note: the previous `SequenceState` is not an `input` to this transaction. Thus, the creation of this new `SequenceState` does not cancel the previous `SequenceState`. 
+The previous `SequenceState` is not _canceled_ by this transaction. It still remains active. (It will actually get canceled by the actual transaction later on.)
 
 When a regular transaction is created, the transaction creator ensures that the `inputs` of the transaction contain all the regular inputs (e.g. `Utxo` being canceled in case of a `Transfer` transaction) but in addition contains the `SequenceState`s for each wallet included in the transaction. To do this, the transaction creator has to contact each wallet involved in the transaction and ask them to provide them `StateHash` of the appropriate `SequenceState` for this transaction.
 
 Note: this needs to be done for wallets of the owners of the `input` states as well as the `output` states. This is to ensure that aggregate proofs can include transactions in which a wallet has appeared as an output as well as an input. (_i.e._ to prove that balance in a wallet has always been above 10000 we need to include transfers in as well as transfers out of this wallet)
 
 Each wallet needs to ensure that the `SequenceState`s assigned to the transactions are actually in sequence. 
-
 
 <a id="orgaee08f0"></a>
 
@@ -71,6 +70,7 @@ We need to ensure that a wallet cannot play tricks by creating two difference `S
 
 In the `inputs` of a regular transaction, we tag each input with either `canceled` or `chained`. When validating a transaction a Notary ensure that each state can only be `canceled` once in the system and can be `chained` only once. This means that at the time of creating a transaction, the Notary ensures that each `canceled` input state has not appeared as a `canceled` input state in any previous transaction and that each `chained` input state has not appeared as a `chained` input state in any previous transaction. 
 
+A `ExtendSequence` transaction contains exactly one input state of type `chained`. By contrast, all the `inputs` in a regular transaction are of type `canceled`. (_i.e._ the regular inputs as well as the sequencing inputs.)
 
 <a id="orgfd5db09"></a>
 
