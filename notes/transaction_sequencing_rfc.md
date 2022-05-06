@@ -30,10 +30,10 @@ This can be solved by having each wallet publish a sequence of states on the led
 
 Now, an aggregate proof would be as follows:
 
-1.  Start with sequence number S
-2.  Use the private data of the N<sup>th</sup> transaction, prove that the sequence state canceled as a part of this transaction contains the sequence number S
+1.  Start with sequence number N
+2.  Use the private data of the N<sup>th</sup> transaction, prove that the sequence state canceled as a part of this transaction contains the sequence number N
 3.  Incorporate the data of this transaction in the aggregate computation
-4.  Increment S
+4.  Increment N
 5.  Repeat these steps with the next transaction
 
 Step 3 computes the aggregate and step 4 ensures that none of the transactions can be skipped (otherwise the proof will fail).
